@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #e9ecef;
+            /* Lighter background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            /* Remove body padding as content handles it */
+        }
+
+        .sidebar {
+            background-color: #343a40;
+            /* Darker sidebar, consistent with admin/teacher */
+            color: white;
+            height: 100vh;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .1);
+            position: fixed;
+            /* Fix sidebar position */
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            /* Ensure sidebar is on top */
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            /* Lighter text for links */
+            display: flex;
+            /* Use flex for icon and text alignment */
+            align-items: center;
+            padding: 12px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 5px;
+            /* Slightly rounded corners for links */
+            margin: 5px 10px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            /* Slightly lighter hover */
+            color: white;
+        }
+
+        .content {
+            padding: 30px;
+            margin-left: 25%;
+            /* Adjust content margin to account for fixed sidebar */
+            width: 75%;
+            /* Ensure content takes remaining width */
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                /* Unfix sidebar on smaller screens */
+                height: auto;
+                width: 100%;
+                box-shadow: none;
+                padding-bottom: 0;
+                /* Adjust padding */
+            }
+
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            /* Primary blue for card headers */
+            color: white;
+            border-bottom: none;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            /* For aligning title and icons */
+            align-items: center;
+            padding: 1rem 1.5rem;
+        }
+
+        .card-header h4 {
+            margin-bottom: 0;
+            color: white;
+        }
+
+        .card-body ul {
+            list-style: none;
+            /* Remove default list style */
+            padding-left: 0;
+            /* Remove default padding */
+        }
+
+        .card-body ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            /* Subtle separator */
+        }
+
+        .card-body ul li:last-child {
+            border-bottom: none;
+        }
+
+        .list-group-item.present {
+            background-color: #d4edda;
+            /* Light green for present */
+            border-color: #c3e6cb;
+        }
+
+        .list-group-item.absent {
+            background-color: #f8d7da;
+            /* Light red for absent */
+            border-color: #f5c6cb;
+        }
+
+        .list-group-item.notification-warning {
+            background-color: #fff3cd;
+            /* Light yellow for warning */
+            border-color: #ffeeba;
+        }
+
+        .list-group-item.notification-info {
+            background-color: #d1ecf1;
+            /* Light blue for info */
+            border-color: #bee5eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 sidebar">
+                <h4 class="text-center mb-4 text-white">Welcome, <span th:text="${username}">User</span></h4>
+
+                <a href="#" onclick="loadStudentSection('attendance')"><i class="fas fa-clipboard-check"></i> View
+                    Attendance</a>
+                <a href="#" onclick="loadStudentSection('results')"><i class="fas fa-chart-line"></i> View Exam
+                    Results</a>
+                <a href="#" onclick="loadStudentSection('timetable')"><i class="fas fa-calendar-alt"></i> View
+                    Timetable</a>
+                <a href="#" onclick="loadStudentSection('notifications')"><i class="fas fa-bell"></i> Notifications</a>
+                <a href="#" onclick="loadStudentSection('profile')"><i class="fas fa-user-circle"></i> View Profile</a>
+                <a href="#" onclick="loadStudentSection('subjects')"><i class="fas fa-book-open"></i> Access
+                    Subjects</a>
+                <a href="#" onclick="loadStudentSection('enrolled')"><i class="fas fa-receipt"></i> Enrolled
+                    Subjects</a>
+                <a href="#" onclick="loadStudentSection('feedback')"><i class="fas fa-comment-dots"></i> Submit
+                    Feedback</a>
+            </div>
+
+            <div class="col-md-9 content">
+                <div id="studentContent">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Welcome, Student!</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Select an option from the menu to get started.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function loadStudentSection(section) {
+            const content = {
+                attendance: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-clipboard-check me-2"></i>View Attendance</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Your attendance record:</p>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center present">
+                                <span><i class="fas fa-check-circle me-2 text-success"></i> Math</span>
+                                <span class="badge bg-success">Present</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center absent">
+                                <span><i class="fas fa-times-circle me-2 text-danger"></i> Science</span>
+                                <span class="badge bg-danger">Absent</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center present">
+                                <span><i class="fas fa-check-circle me-2 text-success"></i> English</span>
+                                <span class="badge bg-success">Present</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+                results: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-chart-line me-2"></i>View Exam Results</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Your latest exam scores:</p>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-calculator me-2"></i> Math</span>
+                                <span class="badge bg-primary">85%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-flask me-2"></i> Science</span>
+                                <span class="badge bg-primary">78%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-language me-2"></i> English</span>
+                                <span class="badge bg-primary">92%</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+                timetable: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-calendar-alt me-2"></i>View Timetable</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Your weekly class schedule:</p>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="far fa-clock me-2"></i> Mon: Math</span>
+                                <span class="badge bg-primary">9:00 AM</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="far fa-clock me-2"></i> Wed: Science</span>
+                                <span class="badge bg-primary">10:00 AM</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="far fa-clock me-2"></i> Fri: English</span>
+                                <span class="badge bg-primary">8:00 AM</span>
+                            </li>
+                        </ul>
+                        <div class="alert alert-info mt-3" role="alert">
+                            Timetable for the current week.
+                        </div>
+                    </div>
+                </div>
+            `,
+                notifications: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-bell me-2"></i>Notifications</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Recent updates:</p>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center notification-warning">
+                                <span><i class="fas fa-exclamation-triangle me-2 text-warning"></i> Midterm exam on Oct 10</span>
+                                <span class="badge bg-warning text-dark">Important</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center notification-info">
+                                <span><i class="fas fa-bullhorn me-2 text-info"></i> Science project due next Friday</span>
+                                <span class="badge bg-info">Reminder</span>
+                            </li>
+                             <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-info-circle me-2"></i> School holiday on June 15</span>
+                                <span class="badge bg-secondary">Info</span>
+                            </li>
+                        </ul>
+                        <div class="alert alert-success mt-3" role="alert">
+                            All notifications read.
+                        </div>
+                    </div>
+                </div>
+            `,
+                profile: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-user-circle me-2"></i>View Profile</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><i class="fas fa-user me-2"></i> <strong>Name:</strong> John Doe</p>
+                        <p><i class="fas fa-id-card me-2"></i> <strong>Student ID:</strong> ST123456</p>
+                        <p><i class="fas fa-envelope me-2"></i> <strong>Email:</strong> john@student.edu</p>
+                        <p><i class="fas fa-calendar-alt me-2"></i> <strong>Date of Birth:</strong> 2007-01-15</p>
+                        <p><i class="fas fa-school me-2"></i> <strong>Class:</strong> Grade 10A</p>
+                        <button class="btn btn-primary mt-3"><i class="fas fa-edit me-1"></i> Edit Profile</button>
+                    </div>
+                </div>
+            `,
+                subjects: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-book-open me-2"></i>Access Subjects</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Browse available learning materials and resources for your subjects:</p>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-calculator me-2"></i> Mathematics</span>
+                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-folder-open"></i> Access</button>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-flask me-2"></i> Physics</span>
+                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-folder-open"></i> Access</button>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-laptop-code me-2"></i> Computer Science</span>
+                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-folder-open"></i> Access</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+                enrolled: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-receipt me-2"></i>Enrolled Subjects</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>You are currently enrolled in the following subjects:</p>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-chalkboard me-2"></i> Mathematics</span>
+                                <span class="badge bg-info">Room A1</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-chalkboard me-2"></i> Physics</span>
+                                <span class="badge bg-info">Room B2</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-chalkboard me-2"></i> Computer Science</span>
+                                <span class="badge bg-info">Lab C1</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+                feedback: `
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-comment-dots me-2"></i>Submit Feedback</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>We value your opinion! Please provide your feedback below:</p>
+                        <div class="mb-3">
+                            <label for="feedbackSubject" class="form-label">Subject (Optional):</label>
+                            <input type="text" class="form-control" id="feedbackSubject" placeholder="e.g., Regarding the new timetable"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackText" class="form-label">Your Feedback:</label>
+                            <textarea class="form-control" id="feedbackText" rows="5" placeholder="Write your feedback here..."></textarea>
+                        </div>
+                        <button class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i> Submit Feedback</button>
+                        <div class="alert alert-success mt-3" role="alert">
+                            Thank you for your feedback!
+                        </div>
+                    </div>
+                </div>
+            `
+            };
+
+            document.getElementById("studentContent").innerHTML = content[section] || `
+            <div class="card">
+                <div class="card-header bg-danger">
+                    <h4><i class="fas fa-exclamation-circle me-2"></i>Error</h4>
+                </div>
+                <div class="card-body">
+                    <p>Section not found.</p>
+                </div>
+            </div>
+        `;
+        }
+    </script>
+
+</body>
+
+</html>

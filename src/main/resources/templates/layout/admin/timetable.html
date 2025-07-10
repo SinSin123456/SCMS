@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Create Timetable</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #e9ecef;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-bottom: none;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+            border-bottom: none;
+            border-top-left-radius: calc(.5rem - 1px);
+            border-top-right-radius: calc(.5rem - 1px);
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .input-control label {
+            font-weight: 500;
+            margin-bottom: .25rem;
+        }
+
+        .input-control .error {
+            font-size: 0.875em;
+            color: #dc3545;
+            margin-top: .25rem;
+        }
+
+        .input-control input.is-invalid,
+        .input-control select.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .input-control input.is-valid,
+        .input-control select.is-valid {
+            border-color: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-calendar-alt"></i> Create Timetable</span>
+                <div>
+                    <button class="btn btn-info me-2 mb-2"><i class="fas fa-upload"></i> Upload Excel</button>
+                    <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#timetableModal"><i
+                            class="fas fa-plus-circle"></i> Create New Timetable</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>Build and publish school-wide timetables easily.</p>
+                <div class="alert alert-info mt-3" role="alert">
+                    Timetable last updated: <span th:text="${lastUpdated}">2025-06-01</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timetable Modal -->
+    <div class="modal fade" id="timetableModal" tabindex="-1" aria-labelledby="timetableModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form th:action="@{/admin/timetable/save}" method="post" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="timetableModalLabel"><i class="fas fa-plus"></i> Add Timetable Entry
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 input-control">
+                        <label for="className" class="form-label">Class</label>
+                        <input type="text" class="form-control" id="className" name="className" required
+                            placeholder="e.g., Grade 10A">
+                        <div class="error"></div>
+                    </div>
+                    <div class="mb-3 input-control">
+                        <label for="subject" class="form-label">Subject</label>
+                        <select class="form-select" id="subject" name="subject" required>
+                            <option value="">Select Subject</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="English Literature">English Literature</option>
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <!-- Add more subjects as needed -->
+                        </select>
+                        <div class="error"></div>
+                    </div>
+                    <div class="mb-3 input-control">
+                        <label for="teacher" class="form-label">Teacher</label>
+                        <input type="text" class="form-control" id="teacher" name="teacher" required
+                            placeholder="Teacher Name">
+                        <div class="error"></div>
+                    </div>
+                    <div class="mb-3 input-control">
+                        <label for="day" class="form-label">Day</label>
+                        <select class="form-select" id="day" name="day" required>
+                            <option value="">Select Day</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                        <div class="error"></div>
+                    </div>
+                    <div class="mb-3 input-control">
+                        <label for="time" class="form-label">Time</label>
+                        <input type="text" class="form-control" id="time" name="time" required
+                            placeholder="e.g., 08:00 - 09:00">
+                        <div class="error"></div>
+                    </div>
+                    <div id="timetableFormMsg" class="text-danger"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

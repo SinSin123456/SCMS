@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Timetable</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+
+    <style>
+        .container {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="mb-4">Create Timetable</h2>
+        <div th:fragment="assignContent">
+            <table id="timetableTable" class="display table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Timetable ID</th>
+                        <th>Subject</th>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="t : ${timetables}">
+                        <td th:text="${t.id}">500</td>
+                        <td th:text="${t.subject.name}">Physics</td>
+                        <td th:text="${t.day}">Monday</td>
+                        <td th:text="${t.startTime}">08:00</td>
+                        <td th:text="${t.endTime}">09:30</td>
+                        <td th:text="${t.room}">Room 101</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#timetableTable').DataTable();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!-- templates/fragments/sidebar.html -->
+<div th:fragment="adminSidebar">
+    <div class="col-md-3 sidebar">
+        <a th:href="@{/admin1/users/register}" class="nav-link active">
+            <i class="fas fa-user-plus"></i> Register Users
+        </a>
+
+        <a th:href="@{/admin1/students/management}" class="nav-link active">
+            <i class="fas fa-user-plus"></i> Manage Students
+        </a>
+
+        <a th:href="@{/admin1/subject/assingsubjects}" class="nav-link active">
+            <i class="fas fa-user-plus"></i> Assign Subjects
+        </a>
+        <!-- <a href="#" class="nav-link active" data-section="subjects">
+            <i class="fas fa-book-open"></i> Assign Subjects
+        </a> -->
+        <a th:href="@{/admin1/admin/timetable}" class="nav-link active">
+            <i class="fas fa-user-plus"></i> Create TimeTable
+        </a>
+
+        <a th:href="@{/admin1/admin/leave}" class="nav-link active">
+            <i class="fas fa-plane-departure"></i> Approve Leave Requests
+        </a>
+
+        <a th:href="@{/admin1/admin/attendance}" class="nav-link active">
+            <i class="fas fa-chart-bar"></i> Attendance Summary
+        </a>
+        <a th:href="@{/admin1/admin/announcements}" class="nav-link active">
+            <i class="fas fa-bullhorn"></i> Manage Announcements
+        </a>
+        <a th:href="@{/admin1/admin/reports}" class="nav-link active">
+            <i class="fas fa-chart-line"></i> View Reports
+        </a>
+
+        <!-- <a href="#" class="nav-link active" data-section="reports">
+            <i class="fas fa-chart-line"></i> View Reports
+        </a> -->
+
+        <a th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+        </a>
+    </div>
+</div>

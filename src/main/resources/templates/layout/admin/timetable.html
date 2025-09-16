@@ -12,6 +12,7 @@
             background-color: #e9ecef;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 0;
+            margin: 0;
         }
 
         .card {
@@ -65,24 +66,88 @@
         .input-control select.is-valid {
             border-color: #28a745;
         }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: #343a40;
+            color: white;
+            height: 100vh;
+            width: 250px;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 5px;
+            margin: 5px 10px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        /* Content area */
+        .content {
+            padding: 30px;
+            margin-left: 250px;
+            /* same as sidebar width */
+            width: calc(100% - 250px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                height: auto;
+                width: 100%;
+                box-shadow: none;
+                padding-bottom: 0;
+            }
+
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container py-4">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-calendar-alt"></i> Create Timetable</span>
-                <div>
-                    <button class="btn btn-info me-2 mb-2"><i class="fas fa-upload"></i> Upload Excel</button>
-                    <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#timetableModal"><i
-                            class="fas fa-plus-circle"></i> Create New Timetable</button>
+    <!-- Sidebar -->
+    <div th:replace="fragments/sidebar :: adminSidebar" class="sidebar"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <div class="container py-4">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-calendar-alt"></i> Create Timetable</span>
+                    <div>
+                        <button class="btn btn-info me-2 mb-2"><i class="fas fa-upload"></i> Upload Excel</button>
+                        <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#timetableModal"><i
+                                class="fas fa-plus-circle"></i> Create New Timetable</button>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <p>Build and publish school-wide timetables easily.</p>
-                <div class="alert alert-info mt-3" role="alert">
-                    Timetable last updated: <span th:text="${lastUpdated}">2025-06-01</span>
+                <div class="card-body">
+                    <p>Build and publish school-wide timetables easily.</p>
+                    <div class="alert alert-info mt-3" role="alert">
+                        Timetable last updated: <span th:text="${lastUpdated}">2025-06-01</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,7 +155,7 @@
 
     <!-- Timetable Modal -->
     <div class="modal fade" id="timetableModal" tabindex="-1" aria-labelledby="timetableModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg"> <!-- made modal a bit wider -->
             <form th:action="@{/admin/timetable/save}" method="post" class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="timetableModalLabel"><i class="fas fa-plus"></i> Add Timetable Entry

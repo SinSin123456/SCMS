@@ -3,16 +3,16 @@ package com.SCMS.SCMS.hepler;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class ResDatatableParam <T> {
+public class ResDatatableParam<T> {
     private int draw;
-    private int recordTotal;
-    private int recordeFiltered;
-    private List <T> data;
-
+    private int recordsTotal; // <-- rename
+    private int recordsFiltered; // <-- rename
+    private List<T> data;
 }

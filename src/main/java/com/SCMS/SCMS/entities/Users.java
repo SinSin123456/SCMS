@@ -1,25 +1,19 @@
 package com.SCMS.SCMS.entities;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
-import jakarta.persistence.JoinColumn;
-
 @Data
 @Entity
-@Table(name= "users")
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +29,7 @@ public class Users {
     private String email;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_roles_users", joinColumns = @JoinColumn(name = "user_id")) 
     @Column(name = "role")
     private Set<String> roles = new HashSet<>();
 
@@ -60,22 +54,6 @@ public class Users {
     @Column(name = "join_date")
     private Timestamp joinDate;
 
-    @Column(name = "is_active", nullable = false)
-    private int isActive = 1;
-
-    // public void setJoinDate(Timestamp joinTimestamp) {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'setJoinDate'");
-    // }
-
-    // public void setRoles(String roles2) {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'setRoles'");
-    // }
-
-    // public void setJoinDate(String joinDate2) {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'setJoinDate'");
-    // }
+    @Column(name = "status")
+    private Boolean status;
 }
-

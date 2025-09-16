@@ -60,89 +60,154 @@
         .badge-published {
             background-color: #28a745;
         }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: #343a40;
+            color: white;
+            height: 100vh;
+            width: 250px;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 5px;
+            margin: 5px 10px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        /* ✅ Fixed Content area */
+        .content {
+            padding: 30px;
+            margin-left: 250px;
+            /* match sidebar width */
+            width: calc(100% - 250px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                height: auto;
+                width: 100%;
+                box-shadow: none;
+                padding-bottom: 0;
+            }
+
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container py-4">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-bullhorn"></i> Manage Announcements
-            </div>
-            <div class="card-body">
-                <form th:action="@{/admin/announcement/save}" method="post" class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label for="announcementTitle" class="form-label">Title</label>
-                        <input type="text" class="form-control" id="announcementTitle" name="title"
-                            placeholder="e.g., School Holiday Notice" required>
+
+    <div class="sidebar">
+        <div th:replace="fragments/sidebar :: adminSidebar"></div>
+    </div>
+
+    <!-- ✅ Wrapped content -->
+    <div class="content">
+        <div class="container py-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-bullhorn"></i> Manage Announcements
+                </div>
+                <div class="card-body">
+                    <form class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="announcementTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="announcementTitle" name="title"
+                                placeholder="e.g., School Holiday Notice" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="audience" class="form-label">Audience</label>
+                            <select class="form-select" id="audience" name="audience" required>
+                                <option value="">Select Audience</option>
+                                <option value="STUDENT">Student</option>
+                                <option value="TEACHER">Teacher</option>
+                                <option value="ALL">All</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="announcementText" class="form-label">Announcement Content</label>
+                            <textarea class="form-control" id="announcementText" name="content" rows="4"
+                                placeholder="Write your announcement here..." required></textarea>
+                        </div>
+                        <div class="col-12 d-flex justify-content-end">
+                            <button class="btn btn-secondary me-2" type="submit" name="action" value="draft">
+                                <i class="fas fa-save"></i> Save Draft
+                            </button>
+                            <button class="btn btn-primary me-2" type="submit" name="action" value="publish">
+                                <i class="fas fa-paper-plane"></i> Publish
+                            </button>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Title</th>
+                                    <th class="text-center">Audience</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center">1</td>
+                                    <td>School Holiday</td>
+                                    <td class="text-center">All</td>
+                                    <td class="text-center">
+                                        <span class="badge badge-draft">Draft</span>
+                                        <span class="badge badge-published">Published</span>
+                                    </td>
+                                    <td class="text-center">2025-06-28 09:00</td>
+                                    <td class="text-center">
+                                        <a class="btn btn-sm btn-info me-1"><i class="fas fa-edit"></i> Edit</a>
+                                        <form style="display:inline;">
+                                            <input type="hidden" name="id" />
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No announcements found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-md-6">
-                        <label for="audience" class="form-label">Audience</label>
-                        <select class="form-select" id="audience" name="audience" required>
-                            <option value="">Select Audience</option>
-                            <option value="STUDENT">Student</option>
-                            <option value="TEACHER">Teacher</option>
-                            <option value="ALL">All</option>
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <label for="announcementText" class="form-label">Announcement Content</label>
-                        <textarea class="form-control" id="announcementText" name="content" rows="4"
-                            placeholder="Write your announcement here..." required></textarea>
-                    </div>
-                    <div class="col-12 d-flex justify-content-end">
-                        <button class="btn btn-secondary me-2" type="submit" name="action" value="draft">
-                            <i class="fas fa-save"></i> Save Draft
-                        </button>
-                        <button class="btn btn-primary me-2" type="submit" name="action" value="publish">
-                            <i class="fas fa-paper-plane"></i> Publish
-                        </button>
-                    </div>
-                </form>
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead>
-                            <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Title</th>
-                                <th class="text-center">Audience</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Date</th>
-                                <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="ann,iterStat : ${announcementList}">
-                                <td class="text-center" th:text="${iterStat.index + 1}">1</td>
-                                <td th:text="${ann.title}">School Holiday</td>
-                                <td class="text-center" th:text="${ann.audience}">All</td>
-                                <td class="text-center">
-                                    <span th:if="${ann.status == 'DRAFT'}" class="badge badge-draft">Draft</span>
-                                    <span th:if="${ann.status == 'PUBLISHED'}"
-                                        class="badge badge-published">Published</span>
-                                </td>
-                                <td class="text-center" th:text="${#dates.format(ann.date, 'yyyy-MM-dd HH:mm')}">
-                                    2025-06-28 09:00</td>
-                                <td class="text-center">
-                                    <a th:href="@{/admin/announcement/edit/{id}(id=${ann.id})}"
-                                        class="btn btn-sm btn-info me-1"><i class="fas fa-edit"></i> Edit</a>
-                                    <form th:action="@{/admin/announcement/delete}" method="post"
-                                        style="display:inline;">
-                                        <input type="hidden" name="id" th:value="${ann.id}" />
-                                        <button type="submit" class="btn btn-sm btn-danger"><i
-                                                class="fas fa-trash-alt"></i> Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(announcementList)}">
-                                <td colspan="6" class="text-center text-muted">No announcements found.</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
+    <!-- ✅ End content -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

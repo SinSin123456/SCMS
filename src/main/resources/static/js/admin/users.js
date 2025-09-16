@@ -1,144 +1,49 @@
-// validtion
-function validationField(value, labelElement, inputElement) {
-    const stringValue = String(value || "").trim(); 
-
-    if (stringValue === "") {
-        labelElement.css("color", "red");
-        inputElement.addClass("is-invalid");
-        return false;
-    } else {
-        labelElement.css("color", "");
-        inputElement.removeClass("is-invalid");
-        return true;
-    }
-}
-
-
 const method = {
     GET: "GET",
-    POST: "POST"
-};
+    POST: "POST",
+}
 
-// const context = "/";
 const route = {
+    ADD_USER: context + "/scms/admin-users/create",
     USER_TABLE: context + "/scms/admin-users/datatable",
-    USER_CREATE: context + "/scms/admin-users/create",
-};
+    EDIT_USER: context + "/scms/admin-users/edit",
+    UPDATE_USER: context + "/scms/admin-users/update",
+    DELETE_USER: context + "/scms/admin-users/delete",
+}
 
 const page = {
-    id: null,
-    table: null,
+    id: "null",
+    table: "null",
     selector: {
-        datatable: $("#usersTable"),
-        inpFullname: $("#fullName"),
-        inpUsername: $("#username"),
-        inpEmail: $("#email"),
-        inpPassword: $("#password"),
-        inpRoles: $("#roles"),
-        inpJoinDate: $("#joinDate"),
-        btnCancel: $("#btncancel"),
-        btnSave: $("#btnsave"),
-        btnAddUsers: $("#btnAddUsers"),
-        // userModalLabel: $("#userModalLabel"),
-        createUsersModal: $("#createUsersModal"),
-        editUserModal: $("#edituserModal"),
-        editFullname: $("#editfullName"),
-        editUsername: $("#editusername"),
-        editEmail: $("#editemail"),
-        editRoles: $("#editroles"),
-        editPassword: $("#editpassword"),
-        btnUpdate: $("#btnupdate")
-    },
-
-    alert: {
-        Toast: Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 5000,
-        }),
-        success: function () {
-            page.alert.Toast.fire({
-                icon: "success",
-                title: "Transaction Completed",
-            });
-        },
-        error: function () {
-            page.alert.Toast.fire({
-                icon: "error",
-                title: "Transaction Error",
-            });
-        },
-        message: function (value) {
-            page.alert.Toast.fire({
-                icon: "error",
-                title: "Message",
-                text: value,
-            });
-        },
-        alertWithMessage: function (value) {
-            $.alert(value);
-        },
-        errorWithMessage: function (value) {
-            $.alert({
-                title: "",
-                content: value,
-                type: "red",
-            });
-        },
-        SweetAlert2: Swal.mixin({
-            width: 400,
-            showCancelButton: false,
-            allowOutsideClick: true,
-            allowEscapeKey: true,
-            showConfirmButton: true,
-        }),
-        sweetSave: function () {
-            page.alert.SweetAlert2.fire({
-                icon: "success",
-                title: "Save Success",
-            });
-        },
-        sweetUpdate: function () {
-            page.alert.SweetAlert2.fire({
-                icon: "success",
-                title: "Update Success",
-            });
-        },
-        sweetDelete: function () {
-            page.alert.SweetAlert2.fire({
-                icon: "success",
-                title: "Delete Success",
-            });
-        },
-        sweetError: function () {
-            page.alert.SweetAlert2.fire({
-                icon: "error",
-                title: "Error",
-            });
-        },
+        fullname: $("#fullName"),
+        username: $("#username"),
+        email: $("#email"),
+        roles: $("#roles"),
+        joinDate: $("#joinDate"),
+        createModal: $("#createUsersModal"),
+        btnAdd: $("#btnadd"),
+        usertable: $("#usersTable"),
+        editfullname: $("#editfullName"),
+        editusername: $("#editusername"),
+        editemail: $("#editemail"),
+        editroles: $("#editroles"),
+        editjoinDate: $("#editjoinDate"),
+        btnupdate: $("#btnupdate"),
+        editModal: $("#editUserModal"),
 
     },
-
 
     ajax: {
-        createUsers: function (data) {
-            return page.util.ajaxRequestParam(route.USER_CREATE, method.POST, data);
+        addUser: function (data) {
+            return page.util.ajaxRequestParam(route.ADD_USER, method.POST, data)
         },
 
-
-        loadDatatable: function () {
-            page.table = page.selector.datatable.DataTable({
-                paging: true,
-                searching: true,
-                info: true,
-                ordering: true,
-                responsive: true,
-                autoWidth: true,
+        loadDataTable: function () {
+            page.table = page.selector.usertable.DataTable({
                 processing: true,
                 serverSide: true,
                 orderCellsTop: true,
-
+                ordering: false,
                 ajax: {
                     url: route.USER_TABLE,
                     type: "POST",
@@ -147,208 +52,229 @@ const page = {
                         return JSON.stringify(d);
                     },
                 },
-                columnDefs: [{
-                    targets: [0],
-                    visible: false,
-                    searchable: false,
-                }],
-                oLanguage: {
-                    sSearch: "Search By Fullname"
-                },
+
                 columns: [
-                    { data: "id" },
                     {
                         data: null,
                         className: "text-center",
                         render: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
-                        },
+                        }
                     },
-                    { data: "fullname", className: "text-center" },
-                    { data: "username", className: "text-center" },
-                    { data: "email", className: "text-center" },
-                    { data: "roles", className: "text-center" },
+                    { data: "id" },
+                    {
+                        data: "fullname",
+                        className: "text-center",
+                        render: function (data) {
+                            return `<span class="text-2-lines" title="${data}">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: "username",
+                        className: "text-center",
+                        render: function (data) {
+                            return `<span class="text-2-lines" title="${data}">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: "email",
+                        className: "text-center",
+                        render: function (data) {
+                            return `<span class="text-2-lines" title="${data}">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: "roles",
+                        className: "text-center",
+                        render: function (data) {
+                            return `<span class="text-2-lines" title="${data}">${data}</span>`;
+                        }
+                    },
                     {
                         data: "joinDate",
                         className: "text-center",
                         render: function (data) {
-                            if (!data) return "";
-                            let date = new Date(data);
-                            let day = date.getDate().toString().padStart(2, "0");
-                            let month = date.toLocaleString("en-GB", { month: "short" });
-                            let year = date.getFullYear();
-                            return `${day}-${month}-${year}`;
-                        },
+                            return `<span class="text-2-lines" title="${data}">${data}</span>`;
+                        }
                     },
                     {
                         data: null,
+                        orderable: false,
+                        searchable: false,
                         className: "text-center",
-                        render: function () {
+                        render: function (data, type, row) {
                             return `
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="#" class="btn btn-sm btn-outline-info btnEdit" data-bs-toggle="tooltip" title="EDIT"><i class="fas fa-edit"></i></a>
-                                        <a href="#" class="btn btn-sm btn-outline-danger btnDelete" data-bs-toggle="tooltip" title="DELETE"><i class="fas fa-trash-alt"></i></a>
-                                    </div>`;
-                        },
-                    },
-                ],
-                drawCallback: function () {
-                    if (typeof page.util.tooltips === "function") {
-                        page.util.tooltips();
+                                <button class="btn btn-sm btn-outline-info editbtn" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger deletebtn">Delete</button>
+                            `;
+                        }
                     }
-                }
+                ]
             });
         },
-        ClearAllInput: function () {
-            page.selector.inpFullname.val("");
-            page.selector.inpEmail.val("");
-            page.selector.inpRoles.val("");
-            page.selector.inpUsername.val("");
-            page.selector.inpRoles.al("");
-            page.selector.editEmail.val("");
-            page.selector.editFullname.val("");
-            // page.selector.editPassword.val("");
-            page.selector.editRoles.val("");
-            page.id = null;
-            page.selector.inpFullname
-                .children("label")
-                .css({ color: "black" })
-                .text(
-                    page.selector.inpFullname
-                        .children("label")
-                        .text()
-                        .replace("is required", "")
-                );
-            page.selector.inpFullname
-                .children("input, select")
-                .css({ "border-color": "#CEE4DA" });
-            page.selector.inpEmail
-                .children("label")
-                .css({ color: "black" })
-                .text(
-                    page.selector.inpEmail
-                        .children("label")
-                        .text()
-                        .replace("is required", "")
-                );
-            page.selector.inpEmail
-                .children("input, select")
-                .css({ "border-color": "#CEE4DA" })
-            page.selector.inpRoles
-                .children("label")
-                .css({ color: "black" })
-                .text(
-                    page.selector.inpRoles
-                        .children("label")
-                        .text()
-                        .replace("is required", "")
-                );
-            page.selector.inpRoles
-                .children("input, select")
-                .css({ "border-color": "#CEE4DA" })
-            page.selector.inpUsername
-                .children("label")
-                .css({ color: "black" })
-                .text(
-                    page.selector.inpUsername
-                        .children("label")
-                        .text()
-                        .replace("is required", "")
-                );
-            page.selector.inpUsername
-                .children("input, select")
-                .css({ "border-color": "#CEE4DA" });
+
+        editUser: function (id) {
+            return page.util.ajaxRequestNoParam(route.EDIT_USER + "/" + id, method.GET)
         },
 
+        updateUser: function (data) {
+            return page.util.ajaxRequestParam(route.UPDATE_USER, method.POST, data)
+        },
+
+        deleteUser: function (id) {
+            return page.util.ajaxRequestNoParam(route.DELETE_USER  + "/" + id, method.POST)
+        },
+
+        allClearInput: function () {
+            page.selector.fullname.val("");
+            page.selector.username.val("");
+            page.selector.email.val("");
+            page.selector.roles.val("");
+            page.selector.joinDate.val("");
+            page.id = "null"
+
+        }
     },
-    fire: {
-        loading: function () {
-            $("#container").waitMe({
-                effect: "win8",
-                text: "",
-                waitTime: -1,
-                textPos: "vertical",
-                effect: "win8",
-                text: "",
-                color: "#000",
-                maxSize: "",
-                waitTime: -1,
-                textPos: "vertical",
-                fontSize: "",
-                source: "",
-                onClose: function () { },
-            });
-        },
 
-        onClickSave: function () {
-            page.selector.btnSave.on("click", function () {
+    fire: {
+        OnClickaddUser: function () {
+            page.selector.btnAdd.on('click', function (e) {
+                e.preventDefault();
                 $.confirm({
                     title: "",
                     content: "Are you sure?",
                     type: "dark",
                     buttons: {
+                        cancle: {
+                            btnClass: "btn-default",
+                        },
                         confirm: {
-                            text: 'Yes',
-                            btnClass: 'btn-blue',
+                            btnClass: "btn-blue",
                             action: function () {
-                                var data = {
-                                    fullname: page.selector.inpFullname.val(),
-                                    email: page.selector.inpEmail.val(),
-                                    roles: page.selector.inpRoles.val(),
-                                    username: page.selector.inpUsername.val(),
-                                    joinDate: page.selector.inpJoinDate.val(),
+                                var newUser = {
+                                    fullname: page.selector.fullname.val(),
+                                    username: page.selector.username.val(),
+                                    email: page.selector.email.val(),
+                                    joinDate: page.selector.joinDate.val(),
+                                    roles: page.selector.roles.val(),
+                                }
+                                page.ajax.addUser(newUser).then((res) => {
+                                    if (res.success) {
+                                        sweetAlert2Util.saveSuccess();
+                                        page.table.ajax.reload();
+                                        page.selector.createModal.modal("hide");
+
+                                        page.selector.fullname.val("");
+                                        page.selector.username.val("");
+                                        page.selector.email.val("");
+                                        page.selector.roles.val("");
+                                        page.selector.joinDate.val("");
+                                    } else {
+                                        console.log("error adding user");
+                                    }
+                                });
+                            },
+                        },
+                    },
+                });
+            });
+        },
+
+        OnClickEditUser: function () {
+            $('body').on('click', '.editbtn', function (e) {
+                e.preventDefault();
+                var d = page.table.row($(this).parents("tr")).data();
+                page.id = d.id;
+                page.ajax.editUser(d.id).then((res) => {
+                    if (res && res.fullname) {
+                        page.selector.editfullname.val(res.fullname || "");
+                        page.selector.editemail.val(res.email || "");
+                        page.selector.editusername.val(res.username || "");
+                        page.selector.editjoinDate.val(res.joinDate || "");
+                        page.selector.editroles.val(res.roles || "");
+
+                        try {
+                            var modalEl = document.getElementById('editUserModal');
+                            var modal = new bootstrap.Modal(modalEl);
+                            modal.show();
+                        } catch (e) {
+                            console.log("Error getting data", e);
+                        }
+                    } else {
+                        console.log("Error fetching user data");
+                    }
+                });
+            });
+        },
+
+        OnClickUpdateUser: function () {
+            page.selector.btnupdate.on('click', function (e) {
+                e.preventDefault();
+                $.confirm({
+                    title: "",
+                    content: "Are you Sure?",
+                    type: "dark",
+                    buttons: {
+                        cancel: {
+                            btnClass: "btn-default",
+                        },
+                        confirm: {
+                            btnClass: "btn-blue",
+                            action: function () {
+                                var updatedUser = {
+                                    id: page.id,
+                                    fullname: page.selector.editfullname.val(),
+                                    username: page.selector.editusername.val(),
+                                    email: page.selector.editemail.val(),
+                                    joinDate: page.selector.editjoinDate.val(),
+                                    roles: page.selector.editroles.val(),
                                 };
 
-                                var validationfieldFullname = validationField(
-                                    data.fullname,
-                                    page.selector.inpFullname.parent().find("label").first(),
-                                    page.selector.inpFullname,
-                                );
-                                var validationfieldEmail = validationField(
-                                    data.email,
-                                    page.selector.inpEmail.parent().find("label").first(),
-                                    page.selector.inpEmail,
-                                );
-                                var validationfieldRoles = validationField(
-                                    data.roles,
-                                    page.selector.inpRoles.parent().find("label").first(),
-                                    page.selector.inpRoles,
-                                );
-                                var validationfieldUsername = validationField(
-                                    data.username,
-                                    page.selector.inpUsername.parent().find("label").first(),
-                                    page.selector.inpUsername
-                                );
-                                var validationfieldJoinDate = validationField(
-                                    data.joinDate,
-                                    page.selector.inpJoinDate.parent().find("label").first(),
-                                    page.selector.inpJoinDate
-                                );
-
-                                if (
-                                    validationfieldEmail &&
-                                    validationfieldFullname &&
-                                    validationfieldJoinDate &&
-                                    validationfieldRoles &&
-                                    validationfieldUsername
-                                ) {
-                                    page.ajax.createUsers(data).then((res) => {
-                                        if (res.success) {
-                                            SweetAlert2Util.success();
-                                            page.table.ajax.reload(null, false);
-                                            page.selector.createUsersModal.modal("hide");
-                                            reloadPage();
-                                        } else {
-                                            SweetAlert2Util.errorWithMessage(res.code, res.message);
-                                        }
-                                    });
-                                }
-                            }
+                                page.ajax.updateUser(updatedUser).then((res) => {
+                                    if (res.success) {
+                                        page.selector.editModal.modal("hide");
+                                        $('.modal-backdrop').remove();
+                                        $('body').removeClass('modal-open');
+                                        page.table.ajax.reload();
+                                        sweetAlert2Util.updateSuccess();
+                                    } else {
+                                        console.log("Error updating user");
+                                    }
+                                });
+                            },
                         },
-                        cancel: function () {
+                    },
+                });
+            });
+        },
 
-                        }
-                    }
+        OnClickDeleteUser: function () {
+            $('body').on('click', '.deletebtn', function (e) {
+                e.preventDefault();
+                var d = page.table.row($(this).parents("tr")).data();
+                page.id = d.id;
+                $.confirm ({
+                    title: "",
+                    content: "Are you sure?",
+                    type: "dark",
+                    buttons: {
+                        cancel: {
+                            btnClass: "btn-default",
+                        },
+                        confirm: {
+                            btnClass: "btn-blue",
+                            action: function () {
+                                page.ajax.deleteUser(d.id).then((res) => {
+                                    if(res.success) {
+                                        sweetAlert2Util.deleteSuccess();
+                                        page.table.ajax.reload();
+                                    } else {
+                                        sweetAlert2Util.errorWithMessage(res.code, res.message);
+                                    }
+                                });
+                            },
+                        },
+                    },
                 });
             });
         },
@@ -357,8 +283,6 @@ const page = {
     util: {
         ajaxRequestParam: function (route, method, data) {
             return new Promise((resolve, reject) => {
-                page.fire.loading();
-
                 $.ajax({
                     url: route,
                     type: method,
@@ -368,82 +292,63 @@ const page = {
                     cache: false,
                     timeout: 600000,
                     success: function (res) {
-                        resolve(res);
+                        resolve(res)
                     },
                     error: function (e) {
-                        reject(e);
-                    },
+                        reject(e)
+                    }
                 });
-            })
-                .finally(() => {
-                    $("#container").waitMe("hide");
-                })
-                .catch((err) => {
-                    console.log(err);
-                    page.alert.error();
-                });
-        },
-        tooltips: function () {
-            $('[data-toggle="tooltip"]').each(function () {
-                var options = {
-                    html: true,
-                };
+            }).finally(() => {
 
-                if ($(this)[0].hasAttribute("data-type")) {
-                    options["template"] =
-                        '<div class="tooltip ' + $(this).attr("data-type") + '" role="tooltip">' +
-                        '<div class="arrow"></div>' +
-                        '<div class="tooltip-inner"></div>' +
-                        '</div>';
-                }
-                $(this).tooltip(options);
+            }).catch((err) => {
+                console.log(err);
             });
         },
 
         ajaxRequestNoParam: function (route, method) {
             return new Promise((resolve, reject) => {
-                page.fire.loading();
                 $.ajax({
                     url: route,
                     type: method,
                     contentType: "application/json",
                     dataType: "json",
-                    cache: false,
+                    caches: false,
                     timeout: 600000,
                     success: function (res) {
                         resolve(res);
                     },
                     error: function (e) {
                         reject(e);
-                    },
+                    }
                 });
-            })
-                .finally(() => {
-                    $("#container").waitMe("hide");
-                })
-                .catch((err) => {
-                    console.log(err);
-                    page.alert.error();
-                });
+            });
         },
+
     },
 
-    initView: function () { },
+    initView: function () {
+
+    },
+
     initData: function () {
-        page.ajax.loadDatatable();
+        page.ajax.loadDataTable();
     },
-    initEvent: function () {
-        page.fire.onClickSave();
 
+    initEvent: function () {
+        page.fire.OnClickaddUser();
+        page.fire.OnClickEditUser();
+        page.fire.OnClickUpdateUser();
+        page.fire.OnClickDeleteUser();
     },
 
     init: function () {
         page.initView();
         page.initData();
         page.initEvent();
-    },
-
+    }
 };
-$(function () {
+
+$(document).ready(function () {
     page.init();
 });
+

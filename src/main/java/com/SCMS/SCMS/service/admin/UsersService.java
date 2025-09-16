@@ -1,21 +1,33 @@
 package com.SCMS.SCMS.service.admin;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +41,13 @@ import com.SCMS.SCMS.hepler.ReqDatatableParam;
 
 import com.SCMS.SCMS.hepler.ResDatatableParam;
 import com.SCMS.SCMS.model.request.admin.ReqSaveUsers;
+import com.SCMS.SCMS.model.request.admin.ReqUdateUsers;
+import com.SCMS.SCMS.model.response.admin.ResEditUsers;
 import com.SCMS.SCMS.model.response.admin.ResListUsers;
 import com.SCMS.SCMS.repository.admin.UsersRepository;
+
+import jakarta.persistence.OptimisticLockException;
+
 import org.slf4j.Logger;
 
 @Service
@@ -41,72 +58,168 @@ public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
 
+    public ResponseEntity<Map<String, Object>> addUsers(@RequestBody ReqSaveUsers data) {
+        String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        Timestamp joinDateTimestamp;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsedDate = sdf.parse(data.getJoinDate());
+            joinDateTimestamp = new Timestamp(parsedDate.getTime());
+        } catch (Exception e) {
+            joinDateTimestamp = now;
+        }
+
+        Set<String> rolesSet = Arrays.stream(data.getRoles().split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+
+        Users users = new Users();
+        users.setUsername(data.getUsername());
+        users.setEmail(data.getEmail());
+        users.setFullname(data.getFullname());
+        users.setRoles(rolesSet);
+        users.setJoinDate(joinDateTimestamp);
+        users.setCreatedAt(now);
+        users.setCreatedBy(authUsername);
+        users.setStatus(true);
+
+        usersRepository.save(users);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "User added successfully");
+        return ResponseEntity.ok(response);
+    }
+
     public ResDatatableParam<ResListUsers> getUsersList(ReqDatatableParam data) {
         try {
-            String joinDate = data.getColumns().get(0).getSearch().getValue();
-            if (joinDate.isEmpty()) {
-                joinDate = null;
+            String searchValue = data.getSearch() != null ? data.getSearch().getValue() : null;
+            int start = data.getStart();
+            int length = data.getLength();
+            if (length < 1) {
+                length = 10;
             }
-            List<ResListUsers> users = new ArrayList<>();
-            List<Users> allUsers = usersRepository.findAllUsers(data.getStart(), data.getLength(),
-                    data.getSearch().getValue(), joinDate);
-            int countAllUsers = usersRepository.countAllUsers(data.getSearch().getValue(), joinDate);
+            int page = start / length;
 
+            logger.debug("DataTable Request: draw={}, start={}, length={}, search={}", data.getDraw(), start, length,
+                    searchValue);
+
+            PageRequest pageRequest = PageRequest.of(page, length);
+
+            List<Users> allUsers = usersRepository.findAllUsers(searchValue, pageRequest);
+            int countAllUsers = usersRepository.countAllUsers(searchValue);
+            logger.debug("Users Found: size={}, Total Count: {}", allUsers.size(), countAllUsers);
+
+            List<ResListUsers> userList = new ArrayList<>();
             for (Users user : allUsers) {
-
-                users.add(new ResListUsers(
+                logger.debug("Processing User: id={}, username={}", user.getId(), user.getUsername());
+                Set<String> roles = user.getRoles() != null ? user.getRoles() : new HashSet<>();
+                userList.add(new ResListUsers(
                         user.getId(),
                         user.getFullname(),
                         user.getUsername(),
                         user.getEmail(),
-                        user.getJoinDate() != null ? user.getJoinDate().toString() : null,
-                        user.getRoles() != null ? String.join(",", user.getRoles()) : null));
+                        roles,
+                        user.getJoinDate()));
             }
-            return new ResDatatableParam<>(data.getDraw(), countAllUsers, countAllUsers, users);
+            logger.debug("Processed User List Size: {}", userList.size());
+
+            return new ResDatatableParam<>(data.getDraw(), countAllUsers, countAllUsers, userList);
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error fetching users list data: " + e.getMessage());
+            logger.error("Error in getUsersList: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to fetch users: " + e.getMessage(), e);
         }
-        return null;
     }
 
-    public ObjResponseEntity<String> createUsers(@Valid @RequestBody ReqSaveUsers data) {
-        try {
-            LocalDateTime now = LocalDateTime.now();
-            Timestamp timestampNow = Timestamp.valueOf(now);
-            String authorUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    public ResponseEntity<ResEditUsers> editUsers(String id) {
+        Long usersId = Long.parseLong(id);
+        Optional<Users> usersOptional = usersRepository.findById(usersId);
 
-            // Date conversion
-            String rawDate = data.getJoinDate();
-            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
-            LocalDate parsedDate = LocalDate.parse(rawDate, inputFormatter);
-            LocalDateTime dateTime = parsedDate.atStartOfDay();
-            Timestamp joinTimestamp = Timestamp.valueOf(dateTime);
-            String roles = data.getRoles();
-            Set<String> roleSet = Arrays.stream(roles.split(","))
+        if (usersOptional.isPresent()) {
+            Users users = usersOptional.get();
+
+            ResEditUsers getUsers = new ResEditUsers();
+            getUsers.setId(users.getId());
+            getUsers.setFullname(users.getFullname());
+            getUsers.setUsername(users.getUsername());
+            getUsers.setEmail(users.getEmail());
+            getUsers.setRoles(String.join(",", users.getRoles()));
+            getUsers.setJoinDate(users.getJoinDate() != null ? users.getJoinDate().toString() : null); // <-- fix here
+
+            return ResponseEntity.ok(getUsers);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    public Users updateUsers(ReqUdateUsers data) {
+        Timestamp joinDateTimestamp;
+        String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // --- Null-safe roles handling ---
+        Set<String> rolesSet = new HashSet<>();
+        if (data.getRoles() != null && !data.getRoles().isEmpty()) {
+            rolesSet = Arrays.stream(data.getRoles().split(","))
                     .map(String::trim)
                     .collect(Collectors.toSet());
+        }
 
-            // Construct new user
-            Users newUsers = new Users();
-            newUsers.setFullname(data.getFullname());
-            newUsers.setEmail(data.getEmail());
-            newUsers.setUsername(data.getUsername());
-            newUsers.setJoinDate(joinTimestamp);
-            newUsers.setCreatedBy(authorUsername);
-            newUsers.setCreatedAt(timestampNow);
-            newUsers.setIsActive(1);
-            newUsers.setRoles(roleSet);
+        // --- Parse joinDate safely ---
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Phnom_Penh"));
+            Date parsedDate = sdf.parse(data.getJoinDate());
+            joinDateTimestamp = new Timestamp(parsedDate.getTime());
+        } catch (Exception e) {
+            ZonedDateTime fallbackZoned = ZonedDateTime.now(ZoneId.of("Asia/Phnom_Penh"));
+            joinDateTimestamp = Timestamp.valueOf(fallbackZoned.toLocalDateTime());
+        }
 
-            Users savedUser = usersRepository.save(newUsers);
-            logger.info("User saved successfully: {}", savedUser.getUsername());
-            System.out.println("User saved successfully: " + savedUser.getUsername());
+        try {
+            ZonedDateTime zonedNow = ZonedDateTime.now(ZoneId.of("Asia/Phnom_Penh"));
+            Timestamp now = Timestamp.valueOf(zonedNow.toLocalDateTime());
 
-            return new ObjResponseEntity<String>().setSuccess("User created");
+            // --- Find existing user ---
+            Users users = usersRepository.findById(data.getId())
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+            // --- Update fields ---
+            users.setFullname(data.getFullname());
+            users.setUsername(data.getUsername());
+            users.setEmail(data.getEmail());
+            users.setRoles(rolesSet); // now safe even if rolesSet is empty
+            users.setJoinDate(joinDateTimestamp);
+            users.setUpdatedAt(now);
+            users.setUpdatedBy(authUsername);
+
+            return usersRepository.save(users);
 
         } catch (Exception e) {
-            logger.error("Error creating user: ", e);
-            return new ObjResponseEntity<String>().setError("Failed to create user: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error updating user", e);
+        }
+    }
+
+    public Users deleteUser(Long id) {
+        try {
+            String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+
+            Users users = usersRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("User with ID " + id + " not found"));
+
+            users.setStatus(false);
+            users.setDeletedAt(now);
+            users.setDeletedBy(authUsername);
+
+            Users savedUser = usersRepository.save(users);
+            System.out.println("Saved user status: " + savedUser.getStatus()); // Debug log
+            return savedUser;
+        } catch (Exception e) {
+            System.err.println("Error saving user: " + e.getMessage());
+            throw e;
         }
     }
 

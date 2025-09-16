@@ -23,7 +23,6 @@ import com.SCMS.SCMS.model.request.AuthRequest;
 import com.SCMS.SCMS.repository.LoginRepository;
 
 @Controller
-// @RequestMapping("/login")
 public class TLoginController {
 
     @Autowired
@@ -55,14 +54,6 @@ public class TLoginController {
         model.addAttribute("role", "ADMIN");
         return View.LOGIN; // or the correct view for your admin login page
     }
-
-    // @GetMapping("/admin/register")
-    // public String adminRegister(@RequestParam(required = false) String roles,
-    // Model model) {
-    // model.addAttribute("selectedRole", roles); // ADD THIS
-    // model.addAttribute("authRequest", new AuthRequest()); // ADD THIS
-    // return View.ADMIN_REGISTER; // should match your Thymeleaf view name
-    // }
 
     @GetMapping("/admin/register")
     public String adminRegister(@RequestParam(required = false) String roles, Model model) {

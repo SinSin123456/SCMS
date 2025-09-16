@@ -2,6 +2,7 @@ package com.SCMS.SCMS.repository.admin;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,58 +13,26 @@ import com.SCMS.SCMS.entities.Users;
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Long> {
 
-       
-        static String queryAllUsers = "SELECT * FROM users " +
-                        "WHERE is_active = 1 " +
-                        "AND fullname LIKE CONCAT('%', :search, '%') " +
-                        "AND (:joinDate IS NULL OR join_date = :joinDate) " +
-                        "ORDER BY fullname " +
-                        "LIMIT :start, :length";
+        boolean existsByUsername(String username);
 
-        static String queryCountAllUsers = "SELECT COUNT(id) FROM users " +
-                        "WHERE is_active = 1 " +
-                        "AND fullname LIKE CONCAT('%', :search, '%') " +
-                        "AND (:joinDate IS NULL OR join_date = :joinDate)";
+        @Query("SELECT u FROM Users u WHERE " +
+                        "(:search IS NULL OR u.fullname LIKE %:search% OR u.username LIKE %:search% OR u.email LIKE %:search%) "
+                        +
+                        "AND u.status = true")
+        List<Users> findAllUsers(@Param("search") String search, Pageable pageable);
 
-        static String queryUsersByEmail = "SELECT * FROM users " +
-                        "WHERE TRIM(LOWER(email)) = LOWER(:email) " +
-                        "AND is_active = 1 " +
-                        "LIMIT 1";
+        @Query(value = "SELECT COUNT(*) FROM users u " +
+                        "WHERE (:search IS NULL OR u.fullname LIKE CONCAT('%', :search, '%') " +
+                        "OR u.username LIKE CONCAT('%', :search, '%') " +
+                        "OR u.email LIKE CONCAT('%', :search, '%')) " +
+                        "AND u.status = true", nativeQuery = true)
+        int countAllUsers(@Param("search") String search);
 
-        static String queryUsersByFullname = "SELECT * FROM users " +
-                        "WHERE TRIM(LOWER(fullname)) = LOWER(:fullname) " +
-                        "AND is_active = 1 " +
-                        "LIMIT 1";
+        static final String querygetusersId = "SELECT * FROM users WHERE id = :id AND status = true";
 
-        static String queryUsers = "SELECT * FROM users " +
-                        "WHERE DAY(join_date) = :day AND MONTH(join_date) = :month " +
-                        "AND is_active = 1";
+        @Query(value = querygetusersId, nativeQuery = true)
+        Users findUsersById(@Param("id") int id);
 
-        static String querygetUsersId = "SELECT * FROM users " +
-                        "WHERE id = :id " +
-                        "AND is_active = 1";
-
-        @Query(value = querygetUsersId, nativeQuery = true)
-        Users findByUsersId(@Param("id") int id);
-
-        @Query(value = queryUsers, nativeQuery = true)
-        List<Users> findUsers(@Param("day") int day, @Param("month") int month);
-
-        @Query(value = queryUsersByEmail, nativeQuery = true)
-        Users findByEmail(@Param("email") String email);
-
-        @Query(value = queryUsersByFullname, nativeQuery = true)
-        Users findUsersByFullname(@Param("fullname") String fullname);
-
-        @Query(value = queryAllUsers, nativeQuery = true)
-        List<Users> findAllUsers(
-                        @Param("start") int start,
-                        @Param("length") int length,
-                        @Param("search") String search,
-                        @Param("joinDate") String joinDate);
-
-        @Query(value = queryCountAllUsers, nativeQuery = true)
-        int countAllUsers(@Param("search") String search, @Param("joinDate") String joinDate);
-
-        Users findByIdAndIsActive(int id, int isActive);
+        @Query("SELECT u FROM Users u WHERE u.status = true")
+        List<Users> findAllActiveUsers();
 }

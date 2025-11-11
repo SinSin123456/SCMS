@@ -40,146 +40,146 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class AssignSubjectService {
-    @Autowired
-    private AssignSubjectRepository assignSubjectRepository;
+    // @Autowired
+    // private AssignSubjectRepository assignSubjectRepository;
 
-    @Autowired
-    private YearRepository yearRepository;
+    // @Autowired
+    // private YearRepository yearRepository;
 
-    @Autowired
-    private MajorRepository majorRepository;
+    // @Autowired
+    // private MajorRepository majorRepository;
 
-    @Autowired
-    private StudentMangementRepository studentMangementRepository;
+    // @Autowired
+    // private StudentMangementRepository studentMangementRepository;
 
-    @Autowired
-    private TeacherRepository teacherRepository;
+    // @Autowired
+    // private TeacherRepository teacherRepository;
 
-    public AssignSubjectDto addAssignSubject(ReqSaveAssignSub data) {
+    // public AssignSubjectDto addAssignSubject(ReqSaveAssignSub data) {
 
-        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-        String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    //     Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+    //     String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        AssignSubject assignSubject = new AssignSubject();
+    //     AssignSubject assignSubject = new AssignSubject();
 
-        if ("STUDENT".equals(data.getRole())) {
-            StudentMangement student = studentMangementRepository.findById(data.getStudentId())
-                    .orElseThrow(() -> new NoSuchElementException("Student not found with ID " + data.getStudentId()));
-            assignSubject.setStudent(student);
-        }
+    //     if ("STUDENT".equals(data.getRole())) {
+    //         StudentMangement student = studentMangementRepository.findById(data.getStudentId())
+    //                 .orElseThrow(() -> new NoSuchElementException("Student not found with ID " + data.getStudentId()));
+    //         assignSubject.setStudent(student);
+    //     }
 
-        if ("TEACHER".equals(data.getRole())) {
-            Teacher teacher = teacherRepository.findById(data.getTeacherId())
-                    .orElseThrow(() -> new NoSuchElementException("Teacher not found with ID " + data.getTeacherId()));
-            assignSubject.setTeacher(teacher);
-        }
+    //     if ("TEACHER".equals(data.getRole())) {
+    //         Teacher teacher = teacherRepository.findById(data.getTeacherId())
+    //                 .orElseThrow(() -> new NoSuchElementException("Teacher not found with ID " + data.getTeacherId()));
+    //         assignSubject.setTeacher(teacher);
+    //     }
 
-        Major major = majorRepository.findById(data.getMajorId())
-                .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getMajorId()));
-        assignSubject.setMajor(major);
+    //     Major major = majorRepository.findById(data.getMajorId())
+    //             .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getMajorId()));
+    //     assignSubject.setMajor(major);
 
-        assignSubject.setTerm(data.getTerm());
+    //     assignSubject.setTerm(data.getTerm());
 
-        assignSubject.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        assignSubject.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
-        assignSubject.setStatus(true);
+    //     assignSubject.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+    //     assignSubject.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+    //     assignSubject.setStatus(true);
 
-        AssignSubject saved = assignSubjectRepository.save(assignSubject);
+    //     AssignSubject saved = assignSubjectRepository.save(assignSubject);
 
-        return new AssignSubjectDto(saved);
-    }
+    //     return new AssignSubjectDto(saved);
+    // }
 
-    public ResDatatableParam<ResListAssignSub> getAssignSubjectsList(ReqDatatableParam data) {
-        List<AssignSubject> allAssign = assignSubjectRepository.findByStatusTrue();
+    // public ResDatatableParam<ResListAssignSub> getAssignSubjectsList(ReqDatatableParam data) {
+    //     List<AssignSubject> allAssign = assignSubjectRepository.findByStatusTrue();
 
-        List<ResListAssignSub> dtos = allAssign.stream()
-                .map(a -> new ResListAssignSub(
-                        a.getId(),
-                        a.getStudent() != null ? a.getStudent().getFullName() : "",
-                        a.getTeacher() != null ? a.getTeacher().getFullName() : "",
-                        a.getMajor() != null ? a.getMajor().getMajorName() : "", 
-                        a.getTerm() != null ? a.getTerm() : ""))
-                .collect(Collectors.toList());
+    //     List<ResListAssignSub> dtos = allAssign.stream()
+    //             .map(a -> new ResListAssignSub(
+    //                     a.getId(),
+    //                     a.getStudent() != null ? a.getStudent().getFullName() : "",
+    //                     a.getTeacher() != null ? a.getTeacher().getFullName() : "",
+    //                     a.getMajor() != null ? a.getMajor().getMajorName() : "", 
+    //                     a.getTerm() != null ? a.getTerm() : ""))
+    //             .collect(Collectors.toList());
 
-        ResDatatableParam<ResListAssignSub> res = new ResDatatableParam<>();
-        res.setDraw(data.getDraw());
-        res.setRecordsTotal(dtos.size());
-        res.setRecordsFiltered(dtos.size());
-        res.setData(dtos);
+    //     ResDatatableParam<ResListAssignSub> res = new ResDatatableParam<>();
+    //     res.setDraw(data.getDraw());
+    //     res.setRecordsTotal(dtos.size());
+    //     res.setRecordsFiltered(dtos.size());
+    //     res.setData(dtos);
 
-        return res;
-    }
+    //     return res;
+    // }
 
 
-    public ResponseEntity<ResEditAssignSub> editAssignSub(Long id) {
-        AssignSubject assignSubject = assignSubjectRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Assign Subject not found"));
+    // public ResponseEntity<ResEditAssignSub> editAssignSub(Long id) {
+    //     AssignSubject assignSubject = assignSubjectRepository.findById(id)
+    //             .orElseThrow(() -> new NoSuchElementException("Assign Subject not found"));
 
-        ResEditAssignSub res = new ResEditAssignSub();
-        res.setTerm(assignSubject.getTerm());
+    //     ResEditAssignSub res = new ResEditAssignSub();
+    //     res.setTerm(assignSubject.getTerm());
 
-        if (assignSubject.getStudent() != null) {
-            res.setPersonId(assignSubject.getStudent().getStudentID());
-            res.setPersonName(assignSubject.getStudent().getFullName());
-            res.setRole("STUDENT");
-        } else if (assignSubject.getTeacher() != null) {
-            res.setPersonId(assignSubject.getTeacher().getTeacherID());
-            res.setPersonName(assignSubject.getTeacher().getFullName());
-            res.setRole("TEACHER");
-        }
+    //     if (assignSubject.getStudent() != null) {
+    //         res.setPersonId(assignSubject.getStudent().getStudentID());
+    //         res.setPersonName(assignSubject.getStudent().getFullName());
+    //         res.setRole("STUDENT");
+    //     } else if (assignSubject.getTeacher() != null) {
+    //         res.setPersonId(assignSubject.getTeacher().getTeacherID());
+    //         res.setPersonName(assignSubject.getTeacher().getFullName());
+    //         res.setRole("TEACHER");
+    //     }
 
-        if (assignSubject.getMajor() != null) {
-            res.setMajorId(assignSubject.getMajor().getMajorID());
-            res.setMajorName(assignSubject.getMajor().getMajorName());
-        }
+    //     if (assignSubject.getMajor() != null) {
+    //         res.setMajorId(assignSubject.getMajor().getMajorID());
+    //         res.setMajorName(assignSubject.getMajor().getMajorName());
+    //     }
 
-        return ResponseEntity.ok(res);
-    }
+    //     return ResponseEntity.ok(res);
+    // }
 
-    public AssignSubjectDto updateAssignSubject(ReqUpdateAssignSub data) {
+    // public AssignSubjectDto updateAssignSubject(ReqUpdateAssignSub data) {
 
-        AssignSubject assignSubject = assignSubjectRepository.findById(data.getId())
-                .orElseThrow(() -> new NoSuchElementException("Assign Subject not found with ID " + data.getId()));
+    //     AssignSubject assignSubject = assignSubjectRepository.findById(data.getId())
+    //             .orElseThrow(() -> new NoSuchElementException("Assign Subject not found with ID " + data.getId()));
 
-        if ("STUDENT".equals(data.getRole())) {
-            StudentMangement student = studentMangementRepository.findById(data.getStudentId())
-                    .orElseThrow(() -> new NoSuchElementException("Student not found with ID " + data.getStudentId()));
-            assignSubject.setStudent(student);
-            assignSubject.setTeacher(null);
-        } else if ("TEACHER".equals(data.getRole())) {
-            Teacher teacher = teacherRepository.findById(data.getTeacherId())
-                    .orElseThrow(() -> new NoSuchElementException("Teacher not found with ID " + data.getTeacherId()));
-            assignSubject.setTeacher(teacher);
-            assignSubject.setStudent(null);
-        }
+    //     if ("STUDENT".equals(data.getRole())) {
+    //         StudentMangement student = studentMangementRepository.findById(data.getStudentId())
+    //                 .orElseThrow(() -> new NoSuchElementException("Student not found with ID " + data.getStudentId()));
+    //         assignSubject.setStudent(student);
+    //         assignSubject.setTeacher(null);
+    //     } else if ("TEACHER".equals(data.getRole())) {
+    //         Teacher teacher = teacherRepository.findById(data.getTeacherId())
+    //                 .orElseThrow(() -> new NoSuchElementException("Teacher not found with ID " + data.getTeacherId()));
+    //         assignSubject.setTeacher(teacher);
+    //         assignSubject.setStudent(null);
+    //     }
 
-        Major major = majorRepository.findById(data.getMajorId())
-                .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getMajorId()));
-        assignSubject.setMajor(major);
+    //     Major major = majorRepository.findById(data.getMajorId())
+    //             .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getMajorId()));
+    //     assignSubject.setMajor(major);
 
-        assignSubject.setTerm(data.getTerm());
-        assignSubject.setStatus(true);
+    //     assignSubject.setTerm(data.getTerm());
+    //     assignSubject.setStatus(true);
 
-        assignSubject.setUpdatedAt(
-                data.getUpdatedAt() != null ? data.getUpdatedAt() : new Timestamp(System.currentTimeMillis()));
-        assignSubject.setUpdatedBy(data.getUpdatedBy() != null ? data.getUpdatedBy()
-                : SecurityContextHolder.getContext().getAuthentication().getName());
+    //     assignSubject.setUpdatedAt(
+    //             data.getUpdatedAt() != null ? data.getUpdatedAt() : new Timestamp(System.currentTimeMillis()));
+    //     assignSubject.setUpdatedBy(data.getUpdatedBy() != null ? data.getUpdatedBy()
+    //             : SecurityContextHolder.getContext().getAuthentication().getName());
 
-        AssignSubject saved = assignSubjectRepository.save(assignSubject);
-        return new AssignSubjectDto(saved);
-    }
+    //     AssignSubject saved = assignSubjectRepository.save(assignSubject);
+    //     return new AssignSubjectDto(saved);
+    // }
 
-    public AssignSubjectDto deleteAssign(Long id) {
-        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-        String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    // public AssignSubjectDto deleteAssign(Long id) {
+    //     Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+    //     String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        AssignSubject assignSubject = assignSubjectRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("subject with id" + "not found"));
+    //     AssignSubject assignSubject = assignSubjectRepository.findById(id)
+    //             .orElseThrow(() -> new NoSuchElementException("subject with id" + "not found"));
 
-        assignSubject.setDeletedAt(now);
-        assignSubject.setDeletedBy(authUsername);
-        assignSubject.setStatus(false);
+    //     assignSubject.setDeletedAt(now);
+    //     assignSubject.setDeletedBy(authUsername);
+    //     assignSubject.setStatus(false);
 
-        return new AssignSubjectDto(assignSubjectRepository.save(assignSubject));
-    }
+    //     return new AssignSubjectDto(assignSubjectRepository.save(assignSubject));
+    // }
 }

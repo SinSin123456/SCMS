@@ -2,24 +2,15 @@ package com.SCMS.SCMS.entities;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
-@Entity
 @AllArgsConstructor
-@Table(name="student")
+@Entity
+@Table(name = "student")
 public class StudentMangement {
 
     @Id
@@ -27,65 +18,48 @@ public class StudentMangement {
     @Column(name = "id")
     private Long studentID;
 
-    @Column(name = "FullName", length = 100, nullable = false)
+    @Column(name = "full_name", length = 100, nullable = false)
     private String fullName;
 
-    @Column(name = "Phone", length = 20)
+    @Column(name = "phone", length = 20)
     private String phone;
 
-    @Column(name = "Sex", length = 10)
+    @Column(name = "sex", length = 10)
     private String sex;
 
-    @Column(name = "registerDate")
+    @Column(name = "register_date")
     private Timestamp registerDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserID", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "YearID")
+    @JoinColumn(name = "year_id")
     private Year year;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "Student_Major", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "major_id"))
-    private Set<Major> major = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "student_major", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "major_id"))
+    private Set<Major> majors = new HashSet<>();
 
-    @CreatedDate
-    @Column(name = "CreatedAt", updatable = false)
+    @Column(name = "status")
+    private Boolean status;
+
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "CreatedBy", length = 100, updatable = false)
+    @Column(name = "created_by")
     private String createdBy;
 
-    @LastModifiedDate
-    @Column(name = "UpdatedAt")
+    @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Column(name = "UpdatedBy", length = 100)
+    @Column(name = "updated_by")
     private String updatedBy;
 
-    @Column(name = "DeletedAt")
+    @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
-    @Column(name = "DeletedBy", length = 100)
+    @Column(name = "deleted_by")
     private String deletedBy;
-
-    @Column(name = "Status")
-    private Boolean status; 
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof StudentMangement))
-            return false;
-        StudentMangement other = (StudentMangement) obj;
-        return studentID != null && studentID.equals(other.getStudentID());
-    }
-
-    @Override
-    public int hashCode() {
-        return studentID != null ? studentID.hashCode() : 0;
-    }
 }

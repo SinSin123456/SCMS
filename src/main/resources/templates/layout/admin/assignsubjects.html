@@ -142,9 +142,12 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">No</th>
-                                    <th class="text-center">Person</th>
-                                    <!-- <th class="text-center">Role</th> -->
+                                    <th class="text-center">Teacher</th>
                                     <th class="text-center">Major</th>
+                                    <th class="text-center">Subject</th>
+                                    <th class="text-center">Day</th>
+                                    <th class="text-center">TimeSlot</th>
+                                    <th class="text-center">Room</th>
                                     <th class="text-center">Term</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -171,27 +174,49 @@
                     <input type="hidden" id="assignmentId" name="assignmentId">
 
                     <div class="mb-3">
-                        <label for="person" class="form-label">Teacher Name</label>
-                        <select class="form-select" id="person" name="personId" required>
+                        <label for="teacher" class="form-label">Teacher Name</label>
+                        <select class="form-select" id="teacher" name="teacherId" required>
                             <option value="">Select Teacher</option>
                         </select>
                         <div class="error text-danger small"></div>
                     </div>
 
-                    <!-- <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
-                        <select class="form-select" id="role" name="role" required>
-                            <option value="">Select Role</option>
-                            <option value="STUDENT">Student</option>
-                            <option value="TEACHER">Teacher</option>
+                    <div class="mb-3">
+                        <label for="major" class="form-label">Major</label>
+                        <select class="form-select" id="major" name="majorId" required>
+                            <option value="">Select Major</option>
                         </select>
                         <div class="error text-danger small"></div>
-                    </div> -->
+                    </div>
 
                     <div class="mb-3">
-                        <label for="subject" class="form-label">Major</label>
-                        <select class="form-select" id="subject" name="subject" required>
-                            <option value="">Select Major</option>
+                        <label for="subject" class="form-label">Subject</label>
+                        <select class="form-select" id="subject" name="subjectId" required>
+                            <option value="">Select Subject</option>
+                        </select>
+                        <div class="error text-danger small"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="day" class="form-label">Day</label>
+                        <select class="form-select" id="day" name="dayId" required>
+                            <option value="">Select Day</option>
+                        </select>
+                        <div class="error text-danger small"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="timeslot" class="form-label">TimeSlot</label>
+                        <select class="form-select" id="timeslot" name="timeslotId" required>
+                            <option value="">Select TimeSlot</option>
+                        </select>
+                        <div class="error text-danger small"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="room" class="form-label">Room</label>
+                        <select class="form-select" id="room" name="roomId" required>
+                            <option value="">Select Room</option>
                         </select>
                         <div class="error text-danger small"></div>
                     </div>
@@ -227,24 +252,50 @@
                     <input type="hidden" id="editassignmentId" name="editassignmentId">
 
                     <div class="mb-3">
-                        <label for="editperson" class="form-label">Teacher Name</label>
-                        <select class="form-select" id="editperson" name="personId" required></select>
+                        <label for="editteacher" class="form-label">Teacher Name</label>
+                        <select class="form-select" id="editteahcer" name="editteacherId" required>
+                            <option value="">Select Teacher</option>
+                        </select>
                         <div class="error text-danger small"></div>
                     </div>
 
-                    <!-- <div class="mb-3">
-                        <label for="editrole" class="form-label">Role</label>
-                        <select class="form-select" id="editrole" name="editrole" required>
-                            <option value="">Select Role</option>
-                            <option value="STUDENT">Student</option>
-                            <option value="TEACHER">Teacher</option>
+                    <div class="mb-3">
+                        <label for="editmajor" class="form-label">Major</label>
+                        <select class="form-select" id="editmajor" name="editmajorId" required>
+                            <option value="">Select Major</option>
                         </select>
                         <div class="error text-danger small"></div>
-                    </div> -->
+                    </div>
 
                     <div class="mb-3">
-                        <label for="editsubject" class="form-label">Major</label>
-                        <select class="form-select" id="editsubject" name="editsubject" required></select>
+                        <label for="editsubject" class="form-label">Subject</label>
+                        <select class="form-select" id="editsubjct" name="editsubjectId" required>
+                            <option value="">Select Subject</option>
+                        </select>
+                        <div class="error text-danger small"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editday" class="form-label"></label>
+                        <select class="form-select" id="editmajor" name="editmajorId" required>
+                            <option value="">Select Day</option>
+                        </select>
+                        <div class="error text-danger small"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edittimeslot" class="form-label">TimeSlot</label>
+                        <select class="form-select" id="edittimeslot" name="edittimeslotId" required>
+                            <option value="">Select TimeSlot</option>
+                        </select>
+                        <div class="error text-danger small"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editroom" class="form-label">Room</label>
+                        <select class="form-select" id="editroom" name="editroomId" required>
+                            <option value="">Select Room</option>
+                        </select>
                         <div class="error text-danger small"></div>
                     </div>
 

@@ -27,7 +27,7 @@ public class AdminFragmentController {
 
     @GetMapping("/subject/assingsubjects")
     public String assingsubjects() {
-        return "layout/admin/subjects";
+        return "layout/admin/assignsubjects";
     }
 
     @GetMapping("/admin/timetable")

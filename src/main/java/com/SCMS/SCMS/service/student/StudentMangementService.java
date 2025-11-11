@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +24,10 @@ import org.hsqldb.rights.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,6 +78,7 @@ public class StudentMangementService {
         String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
+        // Validate user
         if (data.getUserId() == null) {
             response.put("success", false);
             response.put("message", "Student is required");
@@ -88,19 +93,21 @@ public class StudentMangementService {
             return ResponseEntity.badRequest().body(response);
         }
 
-        // Validate Year ID
+        // Validate Year
         if (data.getYearId() == null) {
             response.put("success", false);
             response.put("message", "Year is required");
             return ResponseEntity.badRequest().body(response);
         }
-        Optional<Year> optionalYear = yearRepository.findById(data.getYearId());
-        if (optionalYear.isEmpty()) {
+        Year year = yearRepository.findById(data.getYearId())
+                .orElse(null);
+        if (year == null) {
             response.put("success", false);
             response.put("message", "Class not found");
             return ResponseEntity.badRequest().body(response);
         }
 
+        // Create student
         StudentMangement student = new StudentMangement();
         student.setFullName(user.getFullname());
         student.setPhone(data.getPhone());
@@ -109,8 +116,9 @@ public class StudentMangementService {
         student.setCreatedAt(now);
         student.setCreatedBy(authUsername);
         student.setStatus(true);
-        student.setYear(optionalYear.get());
+        student.setYear(year);
 
+        // Handle majors safely
         Set<Major> majors = new HashSet<>();
         if (data.getMajorName() != null) {
             for (String idStr : data.getMajorName()) {
@@ -118,13 +126,16 @@ public class StudentMangementService {
                     Long majorId = Long.parseLong(idStr.trim());
                     majorRepository.findById(majorId).ifPresent(majors::add);
                 } catch (NumberFormatException e) {
+                    // skip invalid IDs
                 }
             }
         }
-        student.setMajor(majors);
+        student.setMajors(new HashSet<>(majors)); // avoid modifying PersistentSet directly
 
+        // Save student
         studentMangementRepository.save(student);
 
+        // Prepare response
         List<String> majorNames = majors.stream()
                 .map(Major::getMajorName)
                 .collect(Collectors.toList());
@@ -141,48 +152,38 @@ public class StudentMangementService {
         try {
             String searchValue = data.getSearch() != null ? data.getSearch().getValue() : null;
             int start = data.getStart();
-            int length = data.getLength();
-            if (length < 1) {
-                length = 10;
-            }
+            int length = data.getLength() > 0 ? data.getLength() : 10;
             int page = start / length;
+            Pageable pageable = PageRequest.of(page, length);
 
-            logger.debug("DataTable Request: draw={}, start={}, length={}, search={}",
-                    data.getDraw(), start, length, searchValue);
+            // fetch paginated students
+            List<Map<String, Object>> studentsData = studentMangementRepository
+                    .findStudentsWithMajorsPaginated(searchValue, pageable);
 
-            PageRequest pageRequest = PageRequest.of(page, length);
-
-            List<StudentMangement> allStudents = studentMangementRepository.findAllStudents(searchValue, pageRequest);
-            int countAllStudents = studentMangementRepository.countAllStudents(searchValue);
-
-            logger.debug("Students Found: size={}, Total Count: {}", allStudents.size(), countAllStudents);
+            int totalStudents = studentMangementRepository.countAllStudents(searchValue);
 
             List<ResListStudent> studentList = new ArrayList<>();
-            for (StudentMangement student : allStudents) {
-                logger.debug("Processing Student: id={}, name={}", student.getStudentID(), student.getFullName());
-
-                // map subjects to names (if any)
-                List<String> majorName = student.getMajor()
-                        .stream()
-                        .map(Major::getMajorName)
-                        .toList();
+            for (Map<String, Object> row : studentsData) {
+                // majorNames comes as a comma-separated string
+                List<String> majorNames = new ArrayList<>();
+                Object majorsObj = row.get("majorNames");
+                if (majorsObj != null) {
+                    majorNames = Arrays.asList(majorsObj.toString().split(","));
+                }
 
                 studentList.add(new ResListStudent(
-                        student.getStudentID(),
-                        student.getFullName(),
-
-                        student.getPhone(),
-                        student.getSex(),
-                        student.getYear() != null ? student.getYear().getYearName() : null,
-                        majorName,
-                        student.getCreatedAt()));
+                        ((Number) row.get("studentID")).longValue(),
+                        (String) row.get("fullName"),
+                        (String) row.get("phone"),
+                        (String) row.get("sex"),
+                        (String) row.get("yearName"),
+                        majorNames,
+                        (Timestamp) row.get("createdAt")));
             }
 
-            logger.debug("Processed Student List Size: {}", studentList.size());
+            return new ResDatatableParam<>(data.getDraw(), totalStudents, totalStudents, studentList);
 
-            return new ResDatatableParam<>(data.getDraw(), countAllStudents, countAllStudents, studentList);
         } catch (Exception e) {
-            logger.error("Error in getStudentsList: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to fetch students: " + e.getMessage(), e);
         }
     }
@@ -205,13 +206,13 @@ public class StudentMangementService {
             getstudent.setYearName(student.getYear().getYearName());
         }
 
-        if (student.getMajor() != null && !student.getMajor().isEmpty()) {
-            List<Integer> majorIds = student.getMajor().stream()
+        if (student.getMajors() != null && !student.getMajors().isEmpty()) {
+            List<Integer> majorIds = student.getMajors().stream()
                     .map((Major sub) -> sub.getMajorID().intValue())
                     .collect(Collectors.toList());
             getstudent.setMajorIds(majorIds);
 
-            List<String> majorName = student.getMajor().stream()
+            List<String> majorName = student.getMajors().stream()
                     .map((Major sub) -> sub.getMajorName())
                     .collect(Collectors.toList());
             getstudent.setMajorName(majorName);
@@ -264,7 +265,7 @@ public class StudentMangementService {
                         .map(id -> majorRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Major not found: " + id)))
                         .collect(Collectors.toSet());
-                student.setMajor(majors);
+                student.setMajors(majors);
             }
 
             // Optional: update majors by Name (if provided)
@@ -273,7 +274,7 @@ public class StudentMangementService {
                         .map(name -> majorRepository.findByMajorName(name)
                                 .orElseThrow(() -> new RuntimeException("Major not found: " + name)))
                         .collect(Collectors.toSet());
-                student.setMajor(majorsByName);
+                student.setMajors(majorsByName);
             }
 
             studentMangementRepository.save(student);
@@ -303,7 +304,6 @@ public class StudentMangementService {
                 .collect(Collectors.toList());
     }
 
-
     public ResponseEntity<Map<String, Object>> deletestudent(Long id) {
         String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         StudentMangement student = studentMangementRepository.findById(id)
@@ -321,13 +321,4 @@ public class StudentMangementService {
 
         return ResponseEntity.ok(response);
     }
-
-    // public TodoList deleteTask(Long id) {
-    //     TodoList todoList = todoListRepository.findById(id)
-    //             .orElseThrow(() -> new NoSuchElementException("Todo list with id" + "not found"));
-
-    //     todoList.setDelete(true);
-
-    //     return todoListRepository.save(todoList);
-    // }
 }

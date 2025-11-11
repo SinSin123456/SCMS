@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResDatatableParam<T> {
     private int draw;
-    private int recordsTotal; // <-- rename
-    private int recordsFiltered; // <-- rename
+    private int recordsTotal; 
+    private int recordsFiltered; 
     private List<T> data;
 }

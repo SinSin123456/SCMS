@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 public class ReqSaveStudent {
     private Long userId;
     private String fullName;
-
     private String phone;
     private String sex;
     private Long yearId;

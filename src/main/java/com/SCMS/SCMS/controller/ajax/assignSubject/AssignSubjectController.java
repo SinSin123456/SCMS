@@ -39,62 +39,62 @@ import com.SCMS.SCMS.service.subject.MajorService;
 @RestController
 @RequestMapping("/scms/admin-assignsubject")
 public class AssignSubjectController {
-    @Autowired
-    private AssignSubjectService assignSubjectService;
+    // @Autowired
+    // private AssignSubjectService assignSubjectService;
 
-    @Autowired
-    private MajorService majorService;
+    // @Autowired
+    // private MajorService majorService;
 
-    @Autowired
-    private PersonService personService;
+    // @Autowired
+    // private PersonService personService;
 
-    @PostMapping("/addAssignSub")
-    public Map<String, Object> addAssignSub(@RequestBody ReqSaveAssignSub data) {
-        try {
-            AssignSubjectDto saved = assignSubjectService.addAssignSubject(data);
-            return DataResponse.success(saved, "Assign Subject saved successfully");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return DataResponse.failed(null, e.getMessage());
-        }
-    }
+    // @PostMapping("/addAssignSub")
+    // public Map<String, Object> addAssignSub(@RequestBody ReqSaveAssignSub data) {
+    //     try {
+    //         AssignSubjectDto saved = assignSubjectService.addAssignSubject(data);
+    //         return DataResponse.success(saved, "Assign Subject saved successfully");
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         return DataResponse.failed(null, e.getMessage());
+    //     }
+    // }
 
-    @PostMapping("/subjects")
-    public List<MajorDto> getMajors() {
-        return majorService.getAllMajor();
-    }
+    // @PostMapping("/subjects")
+    // public List<MajorDto> getMajors() {
+    //     return majorService.getAllMajor();
+    // }
 
-    @PostMapping("/persons")
-    public List<PersonDto> getPerson() {
-        return personService.getAllPersons();
-    }
+    // @PostMapping("/persons")
+    // public List<PersonDto> getPerson() {
+    //     return personService.getAllPersons();
+    // }
 
-    @PostMapping("/listAssignSubjects")
-    public ResDatatableParam<ResListAssignSub> listAssignSubjects(@RequestBody ReqDatatableParam data) {
-        return assignSubjectService.getAssignSubjectsList(data);
-    }
+    // @PostMapping("/listAssignSubjects")
+    // public ResDatatableParam<ResListAssignSub> listAssignSubjects(@RequestBody ReqDatatableParam data) {
+    //     return assignSubjectService.getAssignSubjectsList(data);
+    // }
 
-    @GetMapping("/editassign/{id}")
-    public ResponseEntity<ResEditAssignSub> editAssignSub (@PathVariable("id") Long id) {
-        return assignSubjectService.editAssignSub(id);
-    }
+    // @GetMapping("/editassign/{id}")
+    // public ResponseEntity<ResEditAssignSub> editAssignSub (@PathVariable("id") Long id) {
+    //     return assignSubjectService.editAssignSub(id);
+    // }
 
-    @PostMapping("/updateassignsub")
-    public ResponseEntity<?> index(@RequestBody ReqUpdateAssignSub data) {
-        try {
-            AssignSubjectDto updated = assignSubjectService.updateAssignSubject(data);
-           return ResponseEntity.ok(DataResponse.success(updated, "updated"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
-        }
-    }
+    // @PostMapping("/updateassignsub")
+    // public ResponseEntity<?> index(@RequestBody ReqUpdateAssignSub data) {
+    //     try {
+    //         AssignSubjectDto updated = assignSubjectService.updateAssignSubject(data);
+    //        return ResponseEntity.ok(DataResponse.success(updated, "updated"));
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
+    //     }
+    // }
 
-    @PostMapping("/deleteassignsub/{id}")
-    public ResponseEntity<?> deleteAssing(@PathVariable("id") Long id) {
-        AssignSubjectDto assignSubject = assignSubjectService.deleteAssign(id);
-        return ResponseEntity.ok(DataResponse.success(assignSubject, "deleted"));
-    }
+    // @PostMapping("/deleteassignsub/{id}")
+    // public ResponseEntity<?> deleteAssing(@PathVariable("id") Long id) {
+    //     AssignSubjectDto assignSubject = assignSubjectService.deleteAssign(id);
+    //     return ResponseEntity.ok(DataResponse.success(assignSubject, "deleted"));
+    // }
 
 }
 

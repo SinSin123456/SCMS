@@ -2,39 +2,29 @@ package com.SCMS.SCMS.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+import jakarta.persistence.*;
+import lombok.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "major")
 public class Major {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "major_id")
     private Long majorID;
 
-    @Column(name = "MajorName", length = 100, nullable = false)
+    @Column(name = "major_name", length = 100, nullable = false)
     private String majorName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id")
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @ManyToMany(mappedBy = "major")
+    @ManyToMany(mappedBy = "majors", fetch = FetchType.LAZY)
     private Set<StudentMangement> students = new HashSet<>();
+
 }

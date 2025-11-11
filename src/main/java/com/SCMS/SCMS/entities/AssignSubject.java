@@ -1,31 +1,22 @@
 package com.SCMS.SCMS.entities;
 
 import java.sql.Timestamp;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "assign_subject")
 public class AssignSubject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = true)
+    @JoinColumn(name = "student_id")
     private StudentMangement student;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,39 +24,43 @@ public class AssignSubject {
     private Major major;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", nullable = true)
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id")
+    private Subjects subject;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "day_id")
+    private Day day;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "time_slot_id")
+    private TimeSlot timeSlot;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     @Column(name = "term", length = 50)
     private String term;
 
+    @Column(name = "year", length = 10)
+    private String year;
 
     @Column(name = "status")
     private Boolean status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserID", referencedColumnName = "id")
-    private Users user;
-
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name= "created_by")
+    @Column(name = "created_by", length = 100)
     private String createdBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Column(name= "updated_by")
+    @Column(name = "updated_by", length = 100)
     private String updatedBy;
-
-    @Column(name = "deleted_at")
-    private Timestamp deletedAt;
-
-    @Column(name= "deleted_by")
-    private String deletedBy;
-
-    @Column(name = "role")
-    private String role;
-    
 }

@@ -17,14 +17,16 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "year")
 public class Year {
-     @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "YearID")
+    @Column(name = "yearid")
     private Long yearID;
 
-    @Column(name = "YearName")
+    @Column(name = "year_name")
     private String yearName;
 
     @OneToMany(mappedBy = "year", cascade = CascadeType.ALL, orphanRemoval = true)

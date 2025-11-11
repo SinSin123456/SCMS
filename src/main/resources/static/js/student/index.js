@@ -260,9 +260,12 @@ const page = {
                                 const sexVal = page.selector.sex.val();
                                 const phoneVal = page.selector.phone.val();
                                 const yearIdVal = page.selector.year.val();
-                                let majorVal = page.selector.studentMajor.val() || [];
 
-                                if (!Array.isArray(majorVal)) majorVal = [majorVal];
+                                // Get all selected majors as an array
+                                let majorVal = [];
+                                page.selector.studentMajor.find('option:selected').each(function () {
+                                    majorVal.push($(this).val());
+                                });
 
                                 if (!userIdVal) {
                                     sweetAlert2Util.errorWithMessage("", "Please select a student");
@@ -278,8 +281,10 @@ const page = {
                                     sex: sexVal,
                                     phone: phoneVal,
                                     yearId: yearIdVal,
-                                    majorName: majorVal,
+                                    majorName: majorVal, // now an array
                                     registerDate: page.selector.registerDate.val()
+                                        ? new Date(page.selector.registerDate.val()).toISOString()
+                                        : null
                                 };
 
                                 console.log('Sending data:', newStudent);
@@ -392,7 +397,7 @@ const page = {
                                     sex: sexVal || null,
                                     phone: phoneVal || null,
                                     yearId: yearIdVal ? parseInt(yearIdVal) : null,
-                                    majorId: majorIdVal,           
+                                    majorId: majorIdVal,
                                     registerDate: page.selector.editregisterDate.val()
                                 };
 
@@ -437,14 +442,14 @@ const page = {
                             action: function () {
                                 console.log(d.id);
                                 page.ajax.deleteStudent(d.id).then((res) => {
-                                    if(res.success) {
+                                    if (res.success) {
                                         try {
                                             sweetAlert2Util.deleteSuccess();
                                             page.table.ajax.reload();
                                         } catch (e) {
                                             console.log("Error deleting data", e);
                                         }
-                                    }else {
+                                    } else {
                                         console.log("Failed to delete");
                                     }
                                 })

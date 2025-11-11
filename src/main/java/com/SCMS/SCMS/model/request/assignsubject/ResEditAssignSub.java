@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class ResEditAssignSub {
     private Long personId;
     private String personName;
-    private Long subjectId;
-    private String subjectName;
+    private Long majorId;
+    private String majorName;
     private String role;
     private String term;
 }

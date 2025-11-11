@@ -14,24 +14,24 @@ import com.SCMS.SCMS.entities.StudentMangement;
 @Repository
 public interface StudentMangementRepository extends JpaRepository<StudentMangement, Long> {
 
-        boolean existsByEmail(String email);
+        // boolean existsByEmail(String email);
 
         @Query("SELECT s FROM StudentMangement s " +
-                        "LEFT JOIN s.schoolClass c " +
+                        "LEFT JOIN s.year c " +
                         "WHERE s.status = true AND (" +
                         ":search IS NULL OR " +
                         "s.fullName LIKE %:search% OR " +
-                        "s.email LIKE %:search% OR " +
-                        "c.className LIKE %:search%)")
+                        // "s.email LIKE %:search% OR " +
+                        "c.yearName LIKE %:search%)")
         List<StudentMangement> findAllStudents(@Param("search") String search, Pageable pageable);
 
         @Query("SELECT COUNT(s) FROM StudentMangement s " +
-                        "LEFT JOIN s.schoolClass c " +
+                        "LEFT JOIN s.year c " +
                         "WHERE s.status = true AND (" +
                         ":search IS NULL OR " +
                         "s.fullName LIKE %:search% OR " +
-                        "s.email LIKE %:search% OR " +
-                        "c.className LIKE %:search%)")
+                        // "s.email LIKE %:search% OR " +
+                        "c.yearName LIKE %:search%)")
 
         int countAllStudents(@Param("search") String search);
 

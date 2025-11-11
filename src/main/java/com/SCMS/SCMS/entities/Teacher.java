@@ -43,5 +43,5 @@ public class Teacher {
     private Users user;
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Subject> subjects = new ArrayList<>();
+    private List<Major> subjects = new ArrayList<>();
 }

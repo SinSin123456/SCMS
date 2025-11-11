@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-
-
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.SCMS.SCMS.controller.ajax.admin.UsersController;
+import com.SCMS.SCMS.entities.StudentMangement;
+import com.SCMS.SCMS.entities.Teacher;
 import com.SCMS.SCMS.entities.Users;
 import com.SCMS.SCMS.hepler.LogHelper;
 import com.SCMS.SCMS.hepler.ObjResponseEntity;
@@ -45,6 +45,8 @@ import com.SCMS.SCMS.model.request.admin.ReqUdateUsers;
 import com.SCMS.SCMS.model.response.admin.ResEditUsers;
 import com.SCMS.SCMS.model.response.admin.ResListUsers;
 import com.SCMS.SCMS.repository.admin.UsersRepository;
+import com.SCMS.SCMS.repository.student.StudentMangementRepository;
+import com.SCMS.SCMS.repository.student.TeacherRepository;
 
 import jakarta.persistence.OptimisticLockException;
 
@@ -58,41 +60,51 @@ public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
 
-    public ResponseEntity<Map<String, Object>> addUsers(@RequestBody ReqSaveUsers data) {
-        String authUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        Timestamp now = new Timestamp(System.currentTimeMillis());
+    @Autowired
+    private StudentMangementRepository studentMangementRepository;  
 
-        Timestamp joinDateTimestamp;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date parsedDate = sdf.parse(data.getJoinDate());
-            joinDateTimestamp = new Timestamp(parsedDate.getTime());
-        } catch (Exception e) {
-            joinDateTimestamp = now;
-        }
+    @Autowired
+    private TeacherRepository teacherRepository;
 
-        Set<String> rolesSet = Arrays.stream(data.getRoles().split(","))
-                .map(String::trim)
-                .collect(Collectors.toSet());
 
-        Users users = new Users();
-        users.setUsername(data.getUsername());
-        users.setEmail(data.getEmail());
-        users.setFullname(data.getFullname());
-        users.setRoles(rolesSet);
-        users.setJoinDate(joinDateTimestamp);
-        users.setCreatedAt(now);
-        users.setCreatedBy(authUsername);
-        users.setStatus(true);
+    public ResponseEntity<Map<String, Object>> addUsers(@RequestBody ReqSaveUsers
+    data) {
+    String authUsername =
+    SecurityContextHolder.getContext().getAuthentication().getName();
+    Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        usersRepository.save(users);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "User added successfully");
-        return ResponseEntity.ok(response);
+    Timestamp joinDateTimestamp;
+    try {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date parsedDate = sdf.parse(data.getJoinDate());
+    joinDateTimestamp = new Timestamp(parsedDate.getTime());
+    } catch (Exception e) {
+    joinDateTimestamp = now;
     }
 
+    Set<String> rolesSet = Arrays.stream(data.getRoles().split(","))
+    .map(String::trim)
+    .collect(Collectors.toSet());
+
+    Users users = new Users();
+    users.setUsername(data.getUsername());
+    users.setEmail(data.getEmail());
+    users.setFullname(data.getFullname());
+    users.setRoles(rolesSet);
+    users.setJoinDate(joinDateTimestamp);
+    users.setCreatedAt(now);
+    users.setCreatedBy(authUsername);
+    users.setStatus(true);
+
+    usersRepository.save(users);
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("success", true);
+    response.put("message", "User added successfully");
+    return ResponseEntity.ok(response);
+    }
+
+   
     public ResDatatableParam<ResListUsers> getUsersList(ReqDatatableParam data) {
         try {
             String searchValue = data.getSearch() != null ? data.getSearch().getValue() : null;

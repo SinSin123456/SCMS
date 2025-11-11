@@ -13,14 +13,14 @@ public class AssignSubjectDto {
     private Long id;
     private String studentName;
     private String teacherName;
-    private String subjectName;
+    private String majorName;
     private String term;
 
     public AssignSubjectDto(AssignSubject entity) {
         this.id = entity.getId();
         this.studentName = entity.getStudent() != null ? entity.getStudent().getFullName() : null;
         this.teacherName = entity.getTeacher() != null ? entity.getTeacher().getFullName() : null;
-        this.subjectName = entity.getSubject() != null ? entity.getSubject().getSubjectName() : null;
+        this.majorName = entity.getMajor() != null ? entity.getMajor().getMajorName() : null;
         this.term = entity.getTerm();
     }
 }

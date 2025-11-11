@@ -186,10 +186,10 @@
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Sex</th>
-                                <th>Email</th>
+                                <!-- <th>Email</th> -->
                                 <th>Phone</th>
-                                <th>Subjects</th>
-                                <th>Class</th>
+                                <th>Major</th>
+                                <th>Year</th>
                                 <th>Register Date</th>
                                 <th>Actions</th>
                             </tr>
@@ -214,29 +214,39 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="studentName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="studentName" name="fullName" required>
+                        <label for="studnetName" class="form-label">Student Name</label>
+                        <select class="form-select" id="StudentName" name="userId" required>
+                            <option value="">Select Student</option>
+                        </select>
+                        <div class="error text-danger small"></div>
                     </div>
                     <div class="mb-3">
                         <label for="studentSex" class="form-label">Sex</label>
                         <input type="text" class="form-control" id="studentSex" name="sex" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="studentEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="studentEmail" name="email">
-                    </div>
+
                     <div class="mb-3">
                         <label for="studentPhone" class="form-label">Phone</label>
                         <input type="text" class="form-control" id="studentPhone" name="phone">
                     </div>
+
                     <div class="mb-3">
-                        <label for="studentSubject" class="form-label">Subjects</label>
-                        <input type="text" class="form-control" id="studentSubject" name="subjectNames">
+                        <label for="studentMajor" class="form-label">Major</label>
+                        <select class="form-select" id="studentMajor" name="MajorName" required>
+                            <option value="">-- Select Major --</option>
+                            <!-- Options populated dynamically -->
+                        </select>
+                        <div class="error text-danger small"></div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="studentClass" class="form-label">Class</label>
-                        <input type="text" class="form-control" id="studentClass" name="className">
+                        <label for="studentYear" class="form-label">Year</label>
+                       <select class="form-select" id="studentYear" name="year" required>
+                            <option value="">-- Select Year --</option>
+                       </select>
+                       <div class="error text-danger small"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="registerDate" class="form-label">Register Date</label>
                         <input type="date" class="form-control" id="registerDate" name="registerDate">
@@ -264,28 +274,36 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="editstudentName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="editstudentName" name="editfullName" required>
+                        <label for="editStudentName" class="form-label">Edit Student Name</label>
+                        <select class="form-select" id="editStudentName" name="editstudentName" required>
+                            <option value="">-- Select Student --</option>
+                        </select>
+                        <div class="error text-danger small"></div>
                     </div>
+
                     <div class="mb-3">
                         <label for="editstudentSex" class="form-label">Sex</label>
                         <input type="text" class="form-control" id="editstudentSex" name="editsex" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="editstudentEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="editstudentEmail" name="editemail">
-                    </div>
+
                     <div class="mb-3">
                         <label for="editstudentPhone" class="form-label">Phone</label>
                         <input type="text" class="form-control" id="editstudentPhone" name="editphone">
                     </div>
+
                     <div class="mb-3">
-                        <label for="editstudentSubject" class="form-label">Subjects</label>
-                        <input type="text" class="form-control" id="editstudentSubject" name="editsubjectNames">
+                        <label for="editstudentMajor" class="form-label">Edit Major</label>
+                        <select class="form-select" id="editStudentMajor" name="editStudentMajor" required>
+                            <option value="">-- Select Major --</option>
+                        </select>
+                        <div class="error text-danger small"></div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="editstudentClass" class="form-label">Class</label>
-                        <input type="text" class="form-control" id="editstudentClass" name="editclassName">
+                        <label for="editstudentYear" class="form-label">Year</label>
+                        <select class="form-select" id="editStudentYear" name="editYear" required>
+                            <option value="">-- Select Year --</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="editregisterDate" class="form-label">Register Date</label>
@@ -301,7 +319,7 @@
     </div>
 
     <!-- Scripts -->
-    <script th:inline="javascript"> 
+    <script th:inline="javascript">
         var context = /* [[@{/}]] */ ""; 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

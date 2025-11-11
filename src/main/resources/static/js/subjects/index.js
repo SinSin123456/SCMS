@@ -8,7 +8,6 @@ const route = {
     GET_SUBJECT: context + "/scms/admin-assignsubject/subjects",
     GET_PERSON: context + "/scms/admin-assignsubject/persons",
     DATA_TABLE: context + "/scms/admin-assignsubject/listAssignSubjects",
-    GET_ASSIGN_SUBJECTS: context + "/scms/admin-assignsubject/listAssignSubjects",
     EDIT_ASSIGN: context + "/scms/admin-assignsubject/editassign",
     UPDATE_ASSIGN: context + "/scms/admin-assignsubject/updateassignsub",
     DELETE_ASSIGN: context + "/scms/admin-assignsubject/deleteassignsub"
@@ -98,7 +97,7 @@ const page = {
                 },
                 columns: [
                     { data: null, className: "text-center", render: (data, type, row, meta) => meta.row + 1 },
-                    // { data: "id", className: "text-center" },
+
                     {
                         data: null,
                         className: "text-center",
@@ -106,13 +105,7 @@ const page = {
                             return data.studentName || data.teacherName;
                         }
                     },
-                    {
-                        data: null,
-                        className: "text-center",
-                        render: function (data) {
-                            return data.studentName ? "STUDENT" : "TEACHER";
-                        }
-                    },
+                 
                     { data: "subjectName", className: "text-center" },
                     { data: "term", className: "text-center" },
                     {

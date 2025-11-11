@@ -5,13 +5,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.SCMS.SCMS.entities.Subject;
+import com.SCMS.SCMS.entities.Year;
 
 @Repository
-public interface SubjectRepository extends JpaRepository<Subject, Long> {
+public interface YearRepository extends JpaRepository<Year, Long> {
 
-
-    Optional<Subject> findBySubjectName(String subjectName);
-
+    Optional<Year> findByYearName(String yearName);
 }
-

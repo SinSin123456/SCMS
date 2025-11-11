@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubjectDto {
-    private Long id; 
-    private String name;
+public class YearDto {
+    private Long id;
+    private String yearName;
 }

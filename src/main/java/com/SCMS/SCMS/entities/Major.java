@@ -21,20 +21,20 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "subject")
-public class Subject {
+@Table(name = "major")
+public class Major {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subject_id")
-    private Long subjectID;
+    @Column(name = "major_id")
+    private Long majorID;
 
-    @Column(name = "SubjectName", length = 100, nullable = false)
-    private String subjectName;
+    @Column(name = "MajorName", length = 100, nullable = false)
+    private String majorName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id")
     private Teacher teacher;
 
-    @ManyToMany(mappedBy = "subjects")
+    @ManyToMany(mappedBy = "major")
     private Set<StudentMangement> students = new HashSet<>();
 }

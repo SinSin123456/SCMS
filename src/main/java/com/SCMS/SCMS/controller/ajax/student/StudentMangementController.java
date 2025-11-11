@@ -1,9 +1,7 @@
 package com.SCMS.SCMS.controller.ajax.student;
 
+import java.util.List;
 import java.util.Map;
-
-
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +22,14 @@ import com.SCMS.SCMS.model.request.student.ReqSaveStudent;
 import com.SCMS.SCMS.model.request.student.ReqUpdateStudent;
 import com.SCMS.SCMS.model.request.student.ResEditStudent;
 import com.SCMS.SCMS.model.request.student.ResListStudent;
+import com.SCMS.SCMS.model.request.student.StudentDto;
 import com.SCMS.SCMS.model.response.DataResponse;
+import com.SCMS.SCMS.model.subject.MajorDto;
+import com.SCMS.SCMS.model.subject.PersonDto;
+import com.SCMS.SCMS.model.subject.YearDto;
 import com.SCMS.SCMS.service.student.StudentMangementService;
+import com.SCMS.SCMS.service.subject.MajorService;
+import com.SCMS.SCMS.service.subject.YearService;
 
 import jakarta.transaction.Transactional;
 
@@ -36,6 +40,12 @@ import jakarta.transaction.Transactional;
 public class StudentMangementController {
     @Autowired
     private StudentMangementService studentMangementService;
+
+    @Autowired
+    private MajorService majorService;
+
+    @Autowired
+    private YearService yearService;
 
     @PostMapping("/addstudent")
     public ResponseEntity<Map<String, Object>> addStudent(@RequestBody ReqSaveStudent data) {
@@ -48,8 +58,14 @@ public class StudentMangementController {
     }
 
     @GetMapping("/editstudent/{id}")
-    public ResponseEntity<ResEditStudent> editStudent (@PathVariable("id") Long id) {
+    public ResponseEntity<ResEditStudent> editStudent(@PathVariable("id") Long id) {
         return studentMangementService.editStudent(id);
+    }
+
+    @PostMapping("/deletestudent/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable("id") Long id) {
+        studentMangementService.deletestudent(id);
+        return ResponseEntity.ok(DataResponse.success(null, "Student deleted successfully"));
     }
 
     @PostMapping("/updatestudent")
@@ -57,9 +73,18 @@ public class StudentMangementController {
         return studentMangementService.updateStudent(data);
     }
 
-    @PostMapping("/deletestudent/{id}")
-    public ResponseEntity<?> delete (@PathVariable("id") Long id) {
-        StudentMangement studentMangement  = studentMangementService.deleteStudent(id);
-        return ResponseEntity.ok(DataResponse.success(studentMangement, "deleted"));
+    @GetMapping("/students")
+    public List<StudentDto> getAllStudent() {
+        return studentMangementService.getStudentDropdown();
+    }
+
+    @GetMapping("/majors")
+    public List<MajorDto> getMajors() {
+        return majorService.getAllMajor();
+    }
+
+    @GetMapping("/year")
+    public List<YearDto> getYears() {
+        return yearService.getAllYear();
     }
 }

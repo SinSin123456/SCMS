@@ -17,16 +17,16 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "class")
-public class SchoolClass {
+@Table(name = "year")
+public class Year {
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ClassID")
-    private Long classID;
+    @Column(name = "YearID")
+    private Long yearID;
 
-    @Column(name = "ClassName")
-    private String className;
+    @Column(name = "YearName")
+    private String yearName;
 
-    @OneToMany(mappedBy = "schoolClass", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "year", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentMangement> students = new ArrayList<>();
 }

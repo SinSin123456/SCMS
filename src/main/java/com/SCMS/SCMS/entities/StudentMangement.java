@@ -2,6 +2,7 @@ package com.SCMS.SCMS.entities;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -16,9 +17,9 @@ import lombok.Setter;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "student")
+@AllArgsConstructor
+@Table(name="student")
 public class StudentMangement {
 
     @Id
@@ -28,9 +29,6 @@ public class StudentMangement {
 
     @Column(name = "FullName", length = 100, nullable = false)
     private String fullName;
-
-    @Column(name = "Email", length = 100)
-    private String email;
 
     @Column(name = "Phone", length = 20)
     private String phone;
@@ -46,12 +44,12 @@ public class StudentMangement {
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ClassID")
-    private SchoolClass schoolClass;
+    @JoinColumn(name = "YearID")
+    private Year year;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "Student_Subject", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
-    private Set<Subject> subjects = new HashSet<>();
+    @JoinTable(name = "Student_Major", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "major_id"))
+    private Set<Major> major = new HashSet<>();
 
     @CreatedDate
     @Column(name = "CreatedAt", updatable = false)

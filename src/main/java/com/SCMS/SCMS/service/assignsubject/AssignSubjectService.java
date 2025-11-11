@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.SCMS.SCMS.entities.AssignSubject;
 import com.SCMS.SCMS.entities.StudentMangement;
-import com.SCMS.SCMS.entities.Subject;
+import com.SCMS.SCMS.entities.Major;
 import com.SCMS.SCMS.entities.Teacher;
 import com.SCMS.SCMS.hepler.ReqDatatableParam;
 import com.SCMS.SCMS.hepler.ResDatatableParam;
@@ -29,10 +29,11 @@ import com.SCMS.SCMS.model.request.assignsubject.ReqUpdateAssignSub;
 import com.SCMS.SCMS.model.request.assignsubject.ResEditAssignSub;
 import com.SCMS.SCMS.model.request.assignsubject.ResListAssignSub;
 import com.SCMS.SCMS.repository.assignsubject.AssignSubjectRepository;
-import com.SCMS.SCMS.repository.student.SchoolClassRepository;
+
 import com.SCMS.SCMS.repository.student.StudentMangementRepository;
-import com.SCMS.SCMS.repository.student.SubjectRepository;
+import com.SCMS.SCMS.repository.student.MajorRepository;
 import com.SCMS.SCMS.repository.student.TeacherRepository;
+import com.SCMS.SCMS.repository.student.YearRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -43,10 +44,10 @@ public class AssignSubjectService {
     private AssignSubjectRepository assignSubjectRepository;
 
     @Autowired
-    private SchoolClassRepository schoolClassRepository;
+    private YearRepository yearRepository;
 
     @Autowired
-    private SubjectRepository subjectRepository;
+    private MajorRepository majorRepository;
 
     @Autowired
     private StudentMangementRepository studentMangementRepository;
@@ -73,9 +74,9 @@ public class AssignSubjectService {
             assignSubject.setTeacher(teacher);
         }
 
-        Subject subject = subjectRepository.findById(data.getSubjectId())
-                .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getSubjectId()));
-        assignSubject.setSubject(subject);
+        Major major = majorRepository.findById(data.getMajorId())
+                .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getMajorId()));
+        assignSubject.setMajor(major);
 
         assignSubject.setTerm(data.getTerm());
 
@@ -94,10 +95,10 @@ public class AssignSubjectService {
         List<ResListAssignSub> dtos = allAssign.stream()
                 .map(a -> new ResListAssignSub(
                         a.getId(),
-                        a.getStudent() != null ? a.getStudent().getFullName() : null,
-                        a.getTeacher() != null ? a.getTeacher().getFullName() : null,
-                        a.getSubject().getSubjectName(),
-                        a.getTerm()))
+                        a.getStudent() != null ? a.getStudent().getFullName() : "",
+                        a.getTeacher() != null ? a.getTeacher().getFullName() : "",
+                        a.getMajor() != null ? a.getMajor().getMajorName() : "", 
+                        a.getTerm() != null ? a.getTerm() : ""))
                 .collect(Collectors.toList());
 
         ResDatatableParam<ResListAssignSub> res = new ResDatatableParam<>();
@@ -108,6 +109,7 @@ public class AssignSubjectService {
 
         return res;
     }
+
 
     public ResponseEntity<ResEditAssignSub> editAssignSub(Long id) {
         AssignSubject assignSubject = assignSubjectRepository.findById(id)
@@ -126,9 +128,9 @@ public class AssignSubjectService {
             res.setRole("TEACHER");
         }
 
-        if (assignSubject.getSubject() != null) {
-            res.setSubjectId(assignSubject.getSubject().getSubjectID());
-            res.setSubjectName(assignSubject.getSubject().getSubjectName());
+        if (assignSubject.getMajor() != null) {
+            res.setMajorId(assignSubject.getMajor().getMajorID());
+            res.setMajorName(assignSubject.getMajor().getMajorName());
         }
 
         return ResponseEntity.ok(res);
@@ -151,9 +153,9 @@ public class AssignSubjectService {
             assignSubject.setStudent(null);
         }
 
-        Subject subject = subjectRepository.findById(data.getSubjectId())
-                .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getSubjectId()));
-        assignSubject.setSubject(subject);
+        Major major = majorRepository.findById(data.getMajorId())
+                .orElseThrow(() -> new NoSuchElementException("Subject not found with ID " + data.getMajorId()));
+        assignSubject.setMajor(major);
 
         assignSubject.setTerm(data.getTerm());
         assignSubject.setStatus(true);

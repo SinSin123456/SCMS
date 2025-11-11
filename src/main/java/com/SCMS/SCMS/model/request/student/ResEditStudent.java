@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 public class ResEditStudent {
     private Long id;
     private String fullName;
-    private String email;
+   
     private String phone;
     private String sex;
     private Long classId;              
-    private String className;          
-    private List<Integer> subjectIds;  
-    private List<String> subjectNames; 
+    private String yearName;          
+    private List<Integer> majorIds;  
+    private List<String> majorName; 
     private Timestamp registerDate;  
 }

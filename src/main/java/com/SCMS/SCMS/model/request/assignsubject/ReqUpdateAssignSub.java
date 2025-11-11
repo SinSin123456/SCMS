@@ -14,7 +14,7 @@ public class ReqUpdateAssignSub {
     private Long id; 
     private Long studentId;
     private Long teacherId;
-    private Long subjectId;
+    private Long majorId;
     private String role;
     private String term;
     private boolean status;

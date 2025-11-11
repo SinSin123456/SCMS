@@ -29,8 +29,8 @@ public class AssignSubject {
     private StudentMangement student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_id", nullable = false)
-    private Subject subject;
+    @JoinColumn(name = "major_id", nullable = false)
+    private Major major;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = true)

@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,15 +15,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReqUpdateStudent {
-    private Long id;               
-    private String fullName;       
-    private String email;          
-    private String phone;         
-    private String sex;            
-    private String className;       
-
-    private List<String> subjectNames;
-    private Timestamp registerDate;   
+    private Long studentId;
+    private Long userId;
+    private String fullName;
+    private String phone;
+    private String sex;
+    private Long yearId;
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    private List<String> majorName;
+    private List<Long> majorId;
+    private Timestamp registerDate;
     private boolean status;
     private Timestamp updatedAt;
     private String updatedBy;

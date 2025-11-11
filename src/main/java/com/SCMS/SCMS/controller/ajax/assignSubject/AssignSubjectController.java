@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.SCMS.SCMS.entities.AssignSubject;
+import com.SCMS.SCMS.entities.Major;
 import com.SCMS.SCMS.hepler.ReqDatatableParam;
 import com.SCMS.SCMS.hepler.ResDatatableParam;
 import com.SCMS.SCMS.model.request.assignsubject.AssignSubjectDto;
@@ -27,11 +28,13 @@ import com.SCMS.SCMS.model.request.assignsubject.ResListAssignSub;
 import com.SCMS.SCMS.model.request.student.ReqSaveStudent;
 import com.SCMS.SCMS.model.response.ApiResponse;
 import com.SCMS.SCMS.model.response.DataResponse;
+import com.SCMS.SCMS.model.subject.MajorDto;
 import com.SCMS.SCMS.model.subject.PersonDto;
-import com.SCMS.SCMS.model.subject.SubjectDto;
+
 import com.SCMS.SCMS.service.assignsubject.AssignSubjectService;
 import com.SCMS.SCMS.service.person.PersonService;
-import com.SCMS.SCMS.service.subject.SubjectService;
+import com.SCMS.SCMS.service.subject.MajorService;
+
 
 @RestController
 @RequestMapping("/scms/admin-assignsubject")
@@ -40,7 +43,7 @@ public class AssignSubjectController {
     private AssignSubjectService assignSubjectService;
 
     @Autowired
-    private SubjectService subjectService;
+    private MajorService majorService;
 
     @Autowired
     private PersonService personService;
@@ -57,8 +60,8 @@ public class AssignSubjectController {
     }
 
     @PostMapping("/subjects")
-    public List<SubjectDto> getSubjects() {
-        return subjectService.getAllSubjects();
+    public List<MajorDto> getMajors() {
+        return majorService.getAllMajor();
     }
 
     @PostMapping("/persons")
@@ -67,7 +70,6 @@ public class AssignSubjectController {
     }
 
     @PostMapping("/listAssignSubjects")
-    @ResponseBody
     public ResDatatableParam<ResListAssignSub> listAssignSubjects(@RequestBody ReqDatatableParam data) {
         return assignSubjectService.getAssignSubjectsList(data);
     }

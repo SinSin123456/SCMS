@@ -9,31 +9,32 @@ const route = {
     EDIT_STUDENT: context + "/scms/admin-student/editstudent",
     UPDATE_STUDENT: context + "/scms/admin-student/updatestudent",
     DELETE_STUDENT: context + "/scms/admin-student/deletestudent",
+    ALL_STUDENTS: context + "/scms/admin-student/students",
+    GET_MAJORS: context + "/scms/admin-student/majors",
+    GET_YEARS: context + "/scms/admin-student/year"
 }
 
 const page = {
     id: "null",
     table: "null",
     selector: {
-        name: $("#studentName"),
+        name: $("#StudentName"),
         sex: $("#studentSex"),
-        email: $("#studentEmail"),
         phone: $("#studentPhone"),
-        studentsubject: $("#studentSubject"),
-        class: $("#studentClass"),
+        studentMajor: $("#studentMajor"),
+        year: $("#studentYear"),
         registerDate: $("#registerDate"),
         createModal: $("#addStudentModal"),
         btnSave: $("#btnsavestudent"),
         studentTable: $("#studentTable"),
-        editname: $("#editstudentName"),
+        editname: $("#editStudentName"),
         editsex: $("#editstudentSex"),
-        editemail: $("#editstudentEmail"),
         editphone: $("#editstudentPhone"),
-        editstudentsubject: $("#editstudentSubject"),
-        editclass: $("#editstudentClass"),
+        edityear: $("#editStudentYear"),
+        editstudentMajor: $("#editStudentMajor"),
         editregisterDate: $("#editregisterDate"),
-        editModal: $("#editStudentModal"),
         btnUpdate: $("#btnupdatestudent"),
+        editModal: $("#editStudentModal")
     },
 
     ajax: {
@@ -73,13 +74,6 @@ const page = {
                             return `<span>${data}</span>`;
                         }
                     },
-                    {
-                        data: "email",
-                        className: "text-center",
-                        render: function (data) {
-                            return `<span class="text-truncate-1" title="${data}">${data}</span>`;
-                        }
-                    },
 
                     {
                         data: "phone",
@@ -89,10 +83,8 @@ const page = {
                         }
                     },
 
-
-
                     {
-                        data: "subjectNames",
+                        data: "majorName",
                         className: "text-center",
                         render: function (data) {
                             return `<span class="text-truncate-2" title="${data}">${data}</span>`;
@@ -100,7 +92,7 @@ const page = {
                     },
 
                     {
-                        data: "className",
+                        data: "yearName",
                         className: "text-center",
                         render: function (data) {
                             return `<span class="text-truncate-2" title="${data}">${data}</span>`;
@@ -145,47 +137,171 @@ const page = {
         deleteStudent: function (id) {
             return page.util.ajaxRequestNoParam(route.DELETE_STUDENT + "/" + id, method.POST);
         },
+
+        loadDataAllStudents: function () {
+            $.ajax({
+                url: route.ALL_STUDENTS,
+                method: 'GET',
+                success: function (students) {
+                    let $studentSelect = $("#StudentName");
+                    $studentSelect.empty().append('<option value="">Select Student</option>');
+                    students.forEach(p => {
+                        $studentSelect.append(`<option value="${p.id}">${p.fullName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load students", err);
+                }
+            });
+        },
+
+        loadDataEditAllStudents: function () {
+            $.ajax({
+                url: route.ALL_STUDENTS,
+                method: 'GET',
+                success: function (students) {
+                    let $studentSelect = $("#editStudentName");
+                    $studentSelect.empty().append('<option value="">-- Select Student --</option>');
+                    students.forEach(p => {
+                        $studentSelect.append(`<option value="${p.id}">${p.fullName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load students", err);
+                }
+            });
+        },
+
+        loadDataMajors: function () {
+
+            $.ajax({
+                url: route.GET_MAJORS,
+                method: 'GET',
+                success: function (majors) {
+                    let $majorSelect = $("#studentMajor");
+                    $majorSelect.empty().append('<option value="">-- Select Major --</option>');
+                    majors.forEach(p => {
+                        $majorSelect.append(`<option value="${p.id}">${p.majorName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load majors", err);
+                }
+            });
+        },
+
+        loadEditDataMajors: function () {
+            $.ajax({
+                url: route.GET_MAJORS,
+                method: 'GET',
+                success: function (majors) {
+                    let $majorSelect = $("#editStudentMajor");
+                    $majorSelect.empty().append('<option value="">-- Select Major --</option>');
+                    majors.forEach(p => {
+                        $majorSelect.append(`<option value="${p.id}">${p.majorName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load majors", err);
+                }
+            });
+        },
+
+        loadDataAllYear: function () {
+            $.ajax({
+                url: route.GET_YEARS,
+                method: 'GET',
+                success: function (years) {
+                    let $yearSelect = $("#studentYear");
+                    $yearSelect.empty().append('<option value="">-- Select Year --</option>');
+                    years.forEach(p => {
+                        $yearSelect.append(`<option value="${p.id}">${p.yearName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load years", err);
+                }
+            });
+        },
+
+        loadEditDataAllYear: function () {
+            $.ajax({
+                url: route.GET_YEARS,
+                method: 'GET',
+                success: function (years) {
+                    let $yearSelect = $("#editStudentYear");
+                    $yearSelect.empty().append('<option value="">-- Select Year --</option>');
+                    years.forEach(p => {
+                        $yearSelect.append(`<option value="${p.id}">${p.yearName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load years", err);
+                }
+            });
+        },
     },
 
     fire: {
         OnClickAddStudent: function () {
             page.selector.btnSave.on('click', function (e) {
                 e.preventDefault();
+
                 $.confirm({
                     title: "",
                     content: "Are you sure?",
                     type: "dark",
                     buttons: {
-                        cancel: {
-                            btnClass: "btn-default",
-                        },
+                        cancel: { btnClass: "btn-default" },
                         confirm: {
                             btnClass: "btn-blue",
                             action: function () {
-                                var newstudent = {
-                                    fullName: page.selector.name.val(),
-                                    sex: page.selector.sex.val(),
-                                    email: page.selector.email.val(),
-                                    phone: page.selector.phone.val(),
-                                    subjectNames: page.selector.studentsubject.val().split(',').map(s => s.trim()),
-                                    className: page.selector.class.val(),
-                                    registerDate: page.selector.registerDate.val(),
+                                const userIdVal = page.selector.name.val();
+                                const sexVal = page.selector.sex.val();
+                                const phoneVal = page.selector.phone.val();
+                                const yearIdVal = page.selector.year.val();
+                                let majorVal = page.selector.studentMajor.val() || [];
+
+                                if (!Array.isArray(majorVal)) majorVal = [majorVal];
+
+                                if (!userIdVal) {
+                                    sweetAlert2Util.errorWithMessage("", "Please select a student");
+                                    return;
+                                }
+                                if (!yearIdVal) {
+                                    sweetAlert2Util.errorWithMessage("", "Please select a year");
+                                    return;
+                                }
+
+                                const newStudent = {
+                                    userId: userIdVal,
+                                    sex: sexVal,
+                                    phone: phoneVal,
+                                    yearId: yearIdVal,
+                                    majorName: majorVal,
+                                    registerDate: page.selector.registerDate.val()
                                 };
 
-                                page.ajax.addStudent(newstudent).then((res) => {
-                                    if (res.success) {
-                                        sweetAlert2Util.saveSuccess();
-                                        page.table.ajax.reload();
-                                        page.selector.createModal.modal("hide");
-                                        $('#addStudentModal form')[0].reset();
-                                    } else {
-                                        sweetAlert2Util.errorWithMessage(res.code, res.message);
-                                    }
-                                });
-                            },
+                                console.log('Sending data:', newStudent);
 
-                        },
-                    },
+                                page.ajax.addStudent(newStudent)
+                                    .then((res) => {
+                                        if (res.success) {
+                                            sweetAlert2Util.saveSuccess();
+                                            page.table.ajax.reload();
+                                            page.selector.createModal.modal("hide");
+                                            $('#addStudentModal form')[0].reset();
+                                        } else {
+                                            sweetAlert2Util.errorWithMessage(res.code, res.message);
+                                        }
+                                    })
+                                    .catch((err) => {
+                                        console.error(err);
+                                        sweetAlert2Util.errorWithMessage("", "Server error occurred");
+                                    });
+                            }
+                        }
+                    }
                 });
             });
         },
@@ -199,7 +315,7 @@ const page = {
                     if (res && res.fullName) {
                         page.selector.editname.val(res.fullName || "");
                         page.selector.editsex.val(res.sex || "");
-                        page.selector.editemail.val(res.email || "");
+                        // page.selector.editemail.val(res.email || "");
                         page.selector.editphone.val(res.phone || "");
                         if (res.registerDate) {
                             const date = new Date(res.registerDate);
@@ -210,8 +326,8 @@ const page = {
                             page.selector.editregisterDate.val("");
                         }
 
-                        page.selector.editstudentsubject.val(res.subjectNames.join(", "));
-                        page.selector.editclass.val(res.className || "");
+                        // page.selector.editstudentsubject.val(res.subjectNames.join(", "));
+                        page.selector.edityear.val(res.yearName || "");
 
                         try {
                             var modalEl = document.getElementById('editStudentModal');
@@ -232,57 +348,69 @@ const page = {
         OnClickUpdateStudent: function () {
             page.selector.btnUpdate.on('click', function (e) {
                 e.preventDefault();
-
                 $.confirm({
                     title: "",
-                    content: "Are you sure?",
+                    content: "Are you sure you want to update this student?",
                     type: "dark",
                     buttons: {
-                        cancel: {
-                            btnClass: "btn-default",
-                        },
+                        cancel: { btnClass: "btn-default" },
                         confirm: {
                             btnClass: "btn-blue",
                             action: function () {
-                                // Prepare payload
-                                var updateStudent = {
-                                    id: page.id,
-                                    fullName: page.selector.editname.val(),
-                                    sex: page.selector.editsex.val(),
-                                    email: page.selector.editemail.val(),
-                                    phone: page.selector.editphone.val(),
-                                    subjectNames: page.selector.editstudentsubject.val()
-                                        .split(',')
-                                        .map(s => s.trim())
-                                        .filter(s => s.length > 0), // remove empty strings
-                                    className: page.selector.editclass.val(),
-                                    registerDate: page.selector.editregisterDate.val(),
-                                    status: true
+                                const studentIdVal = page.id;
+                                const studentNameVal = page.selector.editname.find('option:selected').text().trim();
+                                const userIdVal = page.selector.editname.val();
+                                const sexVal = page.selector.editsex.val();
+                                const phoneVal = page.selector.editphone.val();
+                                const yearIdVal = page.selector.edityear.val();
+                                let majorVal = page.selector.editstudentMajor.val() || [];
+
+                                if (!Array.isArray(majorVal)) majorVal = [majorVal];
+
+                                if (!studentIdVal) {
+                                    sweetAlert2Util.errorWithMessage("", "Student ID is missing");
+                                    return;
+                                }
+                                if (!userIdVal) {
+                                    sweetAlert2Util.errorWithMessage("", "Please select a student");
+                                    return;
+                                }
+                                if (!yearIdVal) {
+                                    sweetAlert2Util.errorWithMessage("", "Please select a year");
+                                    return;
+                                }
+
+                                // Convert selected majors to Long IDs
+                                const majorIdVal = majorVal
+                                    .filter(v => v)
+                                    .map(v => parseInt(v.trim()));
+
+                                const updateStudentData = {
+                                    studentId: studentIdVal,
+                                    fullName: studentNameVal,
+                                    userId: parseInt(userIdVal),
+                                    sex: sexVal || null,
+                                    phone: phoneVal || null,
+                                    yearId: yearIdVal ? parseInt(yearIdVal) : null,
+                                    majorId: majorIdVal,           
+                                    registerDate: page.selector.editregisterDate.val()
                                 };
 
-                                // Call AJAX POST
-                                page.ajax.updateStudent(updateStudent)
+                                console.log('Updating student data:', updateStudentData);
+
+                                page.ajax.updateStudent(updateStudentData)
                                     .then((res) => {
                                         if (res.success) {
-                                            // Close modal properly
-                                            var modalEl = document.getElementById('editStudentModal');
-                                            var modal = bootstrap.Modal.getInstance(modalEl);
-                                            if (modal) modal.hide();
-
-                                            $('.modal-backdrop').remove();
-                                            $('body').removeClass('modal-open');
-
-                                            // Reload datatable
-                                            page.table.ajax.reload(null, false);
-
                                             sweetAlert2Util.updateSuccess();
+                                            page.table.ajax.reload();
+                                            page.selector.editModal.modal("hide");
                                         } else {
                                             sweetAlert2Util.errorWithMessage(res.code, res.message);
                                         }
                                     })
-                                    .catch(err => {
-                                        console.log("Update error:", err);
-                                        sweetAlert2Util.errorWithMessage("Error", "Failed to update student.");
+                                    .catch((err) => {
+                                        console.error(err);
+                                        sweetAlert2Util.errorWithMessage("", "Server error occurred");
                                     });
                             }
                         }
@@ -302,27 +430,31 @@ const page = {
                     type: "dark",
                     buttons: {
                         cancel: {
-                            btnClass: "btn-default"
+                            btnClass: "btn-default",
                         },
                         confirm: {
                             btnClass: "btn-blue",
                             action: function () {
+                                console.log(d.id);
                                 page.ajax.deleteStudent(d.id).then((res) => {
-                                    // console.log("Delete Response:", res);
-                                    if (res) {
-                                        sweetAlert2Util.deleteSuccess();
-                                        page.table.ajax.reload();
-                                    } else {
-                                        sweetAlert2Util.errorWithMessage("Delete failed");
+                                    if(res.success) {
+                                        try {
+                                            sweetAlert2Util.deleteSuccess();
+                                            page.table.ajax.reload();
+                                        } catch (e) {
+                                            console.log("Error deleting data", e);
+                                        }
+                                    }else {
+                                        console.log("Failed to delete");
                                     }
-                                });
+                                })
+                            }
+                        }
+                    }
+                })
+            })
+        }
 
-                            },
-                        },
-                    },
-                });
-            });
-        },
     },
 
     util: {
@@ -377,10 +509,29 @@ const page = {
 
     initData: function () {
         page.ajax.loadDataTable();
+        page.ajax.loadDataAllStudents();
+        page.ajax.loadDataEditAllStudents();
+        page.ajax.loadDataMajors();
+        page.ajax.loadEditDataMajors();
+        page.ajax.loadDataAllYear();
+        page.ajax.loadEditDataAllYear();
     },
 
     initEvent: function () {
         page.fire.OnClickAddStudent();
+
+        $('#addStudentModal').on('show.bs.modal', function () {
+            page.ajax.loadDataAllStudents();
+            page.ajax.loadDataMajors();
+            page.ajax.loadDataAllYear();
+        });
+
+        $('#editStudentModal').on('show.bs.modal', function () {
+            page.ajax.loadDataEditAllStudents();
+            page.ajax.loadEditDataMajors();
+            page.ajax.loadEditDataAllYear();
+        });
+
         page.fire.OnClickEditStudent();
         page.fire.OnClickUpdateStudent();
         page.fire.OnClickDeleteStudent();

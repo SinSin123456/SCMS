@@ -130,7 +130,7 @@
         <div class="container-fluid py-4">
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0"><i class="fas fa-book-open me-2"></i>Assign Subjects</h3>
+                    <h3 class="mb-0"><i class="fas fa-book-open me-2"></i>Assign Subjects For Teacher</h3>
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#assignModal"
                         id="btnAddsubjects">
                         <i class="fas fa-plus"></i> Assign Subject
@@ -143,8 +143,8 @@
                                 <tr>
                                     <th class="text-center">No</th>
                                     <th class="text-center">Person</th>
-                                    <th class="text-center">Role</th>
-                                    <th class="text-center">Subject</th>
+                                    <!-- <th class="text-center">Role</th> -->
+                                    <th class="text-center">Major</th>
                                     <th class="text-center">Term</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -171,14 +171,14 @@
                     <input type="hidden" id="assignmentId" name="assignmentId">
 
                     <div class="mb-3">
-                        <label for="person" class="form-label">Person</label>
+                        <label for="person" class="form-label">Teacher Name</label>
                         <select class="form-select" id="person" name="personId" required>
-                            <option value="">Select Person</option>
+                            <option value="">Select Teacher</option>
                         </select>
                         <div class="error text-danger small"></div>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select class="form-select" id="role" name="role" required>
                             <option value="">Select Role</option>
@@ -186,12 +186,12 @@
                             <option value="TEACHER">Teacher</option>
                         </select>
                         <div class="error text-danger small"></div>
-                    </div>
+                    </div> -->
 
                     <div class="mb-3">
-                        <label for="subject" class="form-label">Subject</label>
+                        <label for="subject" class="form-label">Major</label>
                         <select class="form-select" id="subject" name="subject" required>
-                            <option value="">Select Subject</option>
+                            <option value="">Select Major</option>
                         </select>
                         <div class="error text-danger small"></div>
                     </div>
@@ -227,12 +227,12 @@
                     <input type="hidden" id="editassignmentId" name="editassignmentId">
 
                     <div class="mb-3">
-                        <label for="editperson" class="form-label">Person</label>
+                        <label for="editperson" class="form-label">Teacher Name</label>
                         <select class="form-select" id="editperson" name="personId" required></select>
                         <div class="error text-danger small"></div>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="editrole" class="form-label">Role</label>
                         <select class="form-select" id="editrole" name="editrole" required>
                             <option value="">Select Role</option>
@@ -240,10 +240,10 @@
                             <option value="TEACHER">Teacher</option>
                         </select>
                         <div class="error text-danger small"></div>
-                    </div>
+                    </div> -->
 
                     <div class="mb-3">
-                        <label for="editsubject" class="form-label">Subject</label>
+                        <label for="editsubject" class="form-label">Major</label>
                         <select class="form-select" id="editsubject" name="editsubject" required></select>
                         <div class="error text-danger small"></div>
                     </div>

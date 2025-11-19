@@ -28,73 +28,49 @@ import com.SCMS.SCMS.model.request.assignsubject.ResListAssignSub;
 import com.SCMS.SCMS.model.request.student.ReqSaveStudent;
 import com.SCMS.SCMS.model.response.ApiResponse;
 import com.SCMS.SCMS.model.response.DataResponse;
+import com.SCMS.SCMS.model.subject.DayDto;
 import com.SCMS.SCMS.model.subject.MajorDto;
 import com.SCMS.SCMS.model.subject.PersonDto;
-
+import com.SCMS.SCMS.model.subject.SubjectDto;
+import com.SCMS.SCMS.model.subject.TeacherDto;
+import com.SCMS.SCMS.model.subject.TimeSlotDto;
 import com.SCMS.SCMS.service.assignsubject.AssignSubjectService;
 import com.SCMS.SCMS.service.person.PersonService;
 import com.SCMS.SCMS.service.subject.MajorService;
 
-
 @RestController
 @RequestMapping("/scms/admin-assignsubject")
 public class AssignSubjectController {
-    // @Autowired
-    // private AssignSubjectService assignSubjectService;
+   @Autowired
+   private AssignSubjectService assignSubjectService;
 
-    // @Autowired
-    // private MajorService majorService;
+   @Autowired
+   private MajorService majorService;
 
-    // @Autowired
-    // private PersonService personService;
+   @GetMapping("/teacher")
+   public List<TeacherDto> getTeacher() {
+    return assignSubjectService.getTeacherDropdown();
+   }
 
-    // @PostMapping("/addAssignSub")
-    // public Map<String, Object> addAssignSub(@RequestBody ReqSaveAssignSub data) {
-    //     try {
-    //         AssignSubjectDto saved = assignSubjectService.addAssignSubject(data);
-    //         return DataResponse.success(saved, "Assign Subject saved successfully");
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         return DataResponse.failed(null, e.getMessage());
-    //     }
-    // }
+   @GetMapping("/getmajors")
+   public List<MajorDto> getMajors() {
+    return majorService.getAllMajor();
+   }
 
-    // @PostMapping("/subjects")
-    // public List<MajorDto> getMajors() {
-    //     return majorService.getAllMajor();
-    // }
+   @GetMapping("/getsubjects")
+   public List<SubjectDto> getSubjects() {
+    return assignSubjectService.getAllSubjects();
+   }
 
-    // @PostMapping("/persons")
-    // public List<PersonDto> getPerson() {
-    //     return personService.getAllPersons();
-    // }
+   @GetMapping("/getday")
+   public List<DayDto> getDay() {
+    return assignSubjectService.getAllDay();
+   }
 
-    // @PostMapping("/listAssignSubjects")
-    // public ResDatatableParam<ResListAssignSub> listAssignSubjects(@RequestBody ReqDatatableParam data) {
-    //     return assignSubjectService.getAssignSubjectsList(data);
-    // }
-
-    // @GetMapping("/editassign/{id}")
-    // public ResponseEntity<ResEditAssignSub> editAssignSub (@PathVariable("id") Long id) {
-    //     return assignSubjectService.editAssignSub(id);
-    // }
-
-    // @PostMapping("/updateassignsub")
-    // public ResponseEntity<?> index(@RequestBody ReqUpdateAssignSub data) {
-    //     try {
-    //         AssignSubjectDto updated = assignSubjectService.updateAssignSubject(data);
-    //        return ResponseEntity.ok(DataResponse.success(updated, "updated"));
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
-    //     }
-    // }
-
-    // @PostMapping("/deleteassignsub/{id}")
-    // public ResponseEntity<?> deleteAssing(@PathVariable("id") Long id) {
-    //     AssignSubjectDto assignSubject = assignSubjectService.deleteAssign(id);
-    //     return ResponseEntity.ok(DataResponse.success(assignSubject, "deleted"));
-    // }
-
+   @GetMapping("/gettimeslots")
+   public List<TimeSlotDto> getTimeSlot () {
+    return assignSubjectService.geetAllTimeSlot();
+   }
 }
+
 

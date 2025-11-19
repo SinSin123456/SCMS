@@ -107,7 +107,6 @@ public class StudentMangementService {
             return ResponseEntity.badRequest().body(response);
         }
 
-        // Create student
         StudentMangement student = new StudentMangement();
         student.setFullName(user.getFullname());
         student.setPhone(data.getPhone());
@@ -118,7 +117,7 @@ public class StudentMangementService {
         student.setStatus(true);
         student.setYear(year);
 
-        // Handle majors safely
+
         Set<Major> majors = new HashSet<>();
         if (data.getMajorName() != null) {
             for (String idStr : data.getMajorName()) {
@@ -126,16 +125,19 @@ public class StudentMangementService {
                     Long majorId = Long.parseLong(idStr.trim());
                     majorRepository.findById(majorId).ifPresent(majors::add);
                 } catch (NumberFormatException e) {
-                    // skip invalid IDs
+
                 }
             }
         }
-        student.setMajors(new HashSet<>(majors)); // avoid modifying PersistentSet directly
-
-        // Save student
+        // student.setMajors(new HashSet<>(majors)); 
+        student.getMajors().clear();
+        for (Major major : majors) {
+            student.getMajors().add(major);
+            // student.getMajors().add(student);
+        }
+        
         studentMangementRepository.save(student);
 
-        // Prepare response
         List<String> majorNames = majors.stream()
                 .map(Major::getMajorName)
                 .collect(Collectors.toList());
@@ -156,7 +158,6 @@ public class StudentMangementService {
             int page = start / length;
             Pageable pageable = PageRequest.of(page, length);
 
-            // fetch paginated students
             List<Map<String, Object>> studentsData = studentMangementRepository
                     .findStudentsWithMajorsPaginated(searchValue, pageable);
 
@@ -164,7 +165,6 @@ public class StudentMangementService {
 
             List<ResListStudent> studentList = new ArrayList<>();
             for (Map<String, Object> row : studentsData) {
-                // majorNames comes as a comma-separated string
                 List<String> majorNames = new ArrayList<>();
                 Object majorsObj = row.get("majorNames");
                 if (majorsObj != null) {

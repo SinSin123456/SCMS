@@ -261,7 +261,7 @@ const page = {
                                 const phoneVal = page.selector.phone.val();
                                 const yearIdVal = page.selector.year.val();
 
-                                // Get all selected majors as an array
+
                                 let majorVal = [];
                                 page.selector.studentMajor.find('option:selected').each(function () {
                                     majorVal.push($(this).val());

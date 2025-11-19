@@ -4,13 +4,11 @@ const method = {
 }
 
 const route = {
-    ADD_ASSIGNSUB: context + "/scms/admin-assignsubject/addAssignSub",
-    GET_SUBJECT: context + "/scms/admin-assignsubject/subjects",
-    GET_PERSON: context + "/scms/admin-assignsubject/persons",
-    DATA_TABLE: context + "/scms/admin-assignsubject/listAssignSubjects",
-    EDIT_ASSIGN: context + "/scms/admin-assignsubject/editassign",
-    UPDATE_ASSIGN: context + "/scms/admin-assignsubject/updateassignsub",
-    DELETE_ASSIGN: context + "/scms/admin-assignsubject/deleteassignsub"
+    TEACHERDATA: "/scms/admin-assignsubject/teacher",
+    MAJORSDATA: "/scms/admin-assignsubject/getmajors",
+    SUBJECTSDATA: "/scms/admin-assignsubject/getsubjects",
+    DAYSDATA: "/scms/admin-assignsubject/getday",
+    TIMESLOTDATA: "/scms/admin-assignsubject/gettimeslots"
 }
 
 const page = {
@@ -35,342 +33,94 @@ const page = {
     },
 
     ajax: {
-        addAssignSub: function (data) {
-            return page.util.ajaxRequestParam(route.ADD_ASSIGNSUB, method.POST, data);
+        loadTeacherData: function () {
+            $.ajax({
+                url: route.TEACHERDATA,
+                method: 'GET',
+                success: function (teachers) {
+                    let $teacherSelect = $("#teacherName");
+                    $teacherSelect.empty().append('<option value="">Select Teacher</option>');
+                    teachers.forEach(p => {
+                        $teacherSelect.append(`<option value="${p.id}">${p.fullName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load Teachers", err);
+                }
+            });
         },
 
-        loadSubjects: function () {
+        loadDataMajors: function () {
             $.ajax({
-                url: route.GET_SUBJECT,
-                method: 'POST',
+                url: route.MAJORSDATA,
+                method: 'GET',
+                success: function (majors) {
+                    let $majorSelect = $("#teachermajor");
+                    $majorSelect.empty().append('<option value="">Select Major</option>');
+                    majors.forEach(p => {
+                        $majorSelect.append(`<option value="${p.id}">${p.majorName}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.error("Failed to load Majors", err);
+                }
+            });
+        },
+
+        loadDataSubjects: function () {
+            $.ajax({
+                url: route.SUBJECTSDATA,
+                method: 'GET',
                 success: function (subjects) {
-                    let $subjectSelect = $('#subject');
-                    $subjectSelect.empty().append('<option value="">Select Subject</option>');
-                    subjects.forEach(sub => {
-                        $subjectSelect.append(`<option value="${sub.id}">${sub.name}</option>`);
+                    let $subjectSelect = $("#teachersubject");
+                    $subjectSelect.empty().append('<option value="">Select Subejct</option>');
+                    subjects.forEach(p => {
+                        $subjectSelect.append(`<option value="${p.id}">${p.subjectName}</option>`);
                     });
                 },
                 error: function (err) {
-                    console.error("Failed to load subjects:", err);
+                    console.error("Failed to load Subjects", err);
                 }
             });
         },
 
-        loadPersons: function () {
+        loadDataDay: function () {
             $.ajax({
-                url: route.GET_PERSON,
-                method: 'POST',
-                success: function (persons) {
-                    let $personSelect = $("#person");
-                    $personSelect.empty().append('<option value="">Select Person</option>');
-                    persons.forEach(p => {
-                        $personSelect.append(`<option value="${p.id}">${p.fullName} (${p.role})</option>`);
+                url: route.DAYSDATA,
+                method: 'GET',
+                success: function (days) {
+                    let $daySelect = $("#teacherday");
+                    $daySelect.empty().append('<option value="">Select Day</option>');
+                    days.forEach(p => {
+                        $daySelect.append(`<option value="${p.id}">${p.dayName}</option>`);
                     });
                 },
                 error: function (err) {
-                    console.error("Failed to load subjects:", err);
+                    console.error("Failed to load Days", err);
                 }
             });
         },
 
-        loadAssignSubjectsTable: function () {
-            page.table = page.selector.subjectsTable.DataTable({
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                autoWidth: false,
-                ordering: false,
-                ajax: {
-                    url: route.DATA_TABLE,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: function (d) {
-                        return JSON.stringify(d);
-                    },
-                    dataSrc: function (res) {
-                        if (!res) {
-                            console.error("Failed to fetch data:", res);
-                            return [];
-                        }
-                        return res.data;
-                    }
+        loadDataTimeSlot: function () {
+            $.ajax({
+                url: route.TIMESLOTDATA,
+                method: 'GET',
+                success: function (timeslots) {
+                    let $timeslotSelect = $("#teachertimeslot");
+                    $timeslotSelect.empty().append('<option value ="">Select TimeSlot</option>');
+                    timeslots.forEach(p => {
+                        $timeslotSelect.append(`<option value="${p.id}">${p.slotName}</option>`);
+                    });
                 },
-                columns: [
-                    { data: null, className: "text-center", render: (data, type, row, meta) => meta.row + 1 },
-
-                    {
-                        data: null,
-                        className: "text-center",
-                        render: function (data) {
-                            return data.studentName || data.teacherName;
-                        }
-                    },
-                 
-                    { data: "subjectName", className: "text-center" },
-                    { data: "term", className: "text-center" },
-                    {
-                        data: null,
-                        orderable: false,
-                        searchable: false,
-                        className: "text-center",
-                        render: function () {
-                            return `
-                        <button class="btn btn-sm btn-outline-info editAssignBtn" data-bs-toggle="modal" data-bs-target="#editassignModal">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger deleteAssignBtn">Delete</button>
-                    `;
-                        }
-                    }
-                ]
+                error: function (err) {
+                    console.error("Failed to load TimeSlots", err);
+                }
             });
         },
-
-        editAssignSub: function (id) {
-            return page.util.ajaxRequestNoParam(route.EDIT_ASSIGN + "/" + id, method.GET);
-        },
-
-        loadDataEditPerson: function () {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: route.GET_PERSON,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: function (d) {
-                        return JSON.stringify(d);
-                    },
-                    success: function (response) {
-                        const persons = response.data || response;
-                        const $select = $('#editperson');
-
-                        $select.empty();
-
-                        $select.append($('<option>', { value: '', text: '-- Select Person --' }));
-
-                        persons.forEach(function (person) {
-                            if (person && person.id != null && typeof person.fullName === 'string' && person.fullName.trim() !== '') {
-                                $select.append($('<option>', {
-                                    value: person.id,
-                                    text: `${person.fullName} (${person.role})`
-                                }));
-                            }
-                        });
-
-                        resolve($select);
-                    },
-                    error: function (err) {
-                        reject(err);
-                    }
-                });
-            });
-        },
-
-        loadDataEditSubject: function () {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: route.GET_SUBJECT,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: function (d) {
-                        return JSON.stringify(d);
-                    },
-                    success: function (response) {
-                        const subjects = response.data || response;
-                        const $select = $('#editsubject');
-                        $select.empty();
-                        $select.append($('<option>', { value: '', text: '-- Select Subject --' }));
-                        subjects.forEach(function (subject) {
-                            if (subject && subject.id != null && typeof subject.name == "string" && subject.name.trim() !== '') {
-                                $select.append($('<option>', {
-                                    value: subject.id,
-                                    text: subject.name
-                                }));
-                            }
-                        });
-                        resolve();
-                    },
-                    error: function (err) {
-                        reject(err);
-                    }
-                });
-            });
-        },
-
-        updateAssignSubject: function (data) {
-            return page.util.ajaxRequestParam(route.UPDATE_ASSIGN, method.POST, data);
-        },
-
-        deleteAssignSubject: function (id) {
-            return page.util.ajaxRequestNoParam(route.DELETE_ASSIGN + "/" + id, method.POST);
-        },
-
     },
 
     fire: {
-        OnClickAddAssignSub: function () {
-            page.selector.btnsavesujects.on('click', function (e) {
-                e.preventDefault();
 
-                if (this.checkValidity() === false) {
-                    this.reportValidity();
-                    return;
-                }
-
-                $.confirm({
-                    title: "",
-                    content: "Are you sure?",
-                    type: "dark",
-                    buttons: {
-                        cancel: {
-                            btnClass: "btn-default",
-                        },
-                        confirm: {
-                            btnClass: "btn-blue",
-                            action: function () {
-                                var newdata = {
-                                    studentId: $('#person').val(),
-                                    teacherId: $('#person').val(),
-                                    role: $('#role').val(),
-                                    subjectId: $('#subject').val(),
-                                    term: $('#term').val()
-                                };
-
-                                page.ajax.addAssignSub(newdata).then((res) => {
-                                    if (res.success) {
-                                        sweetAlert2Util.saveSuccess();
-                                        page.table.ajax.reload();
-                                        $('#assignModal').modal('hide');
-                                        $('#assignForm')[0].reset();
-                                    } else {
-                                        console.log("error adding data:", res.message);
-                                    }
-                                });
-                            },
-                        },
-                    },
-                });
-            });
-        },
-
-        OnClickEditAssignSub: function () {
-            $('body').on('click', ".editAssignBtn", function (e) {
-                e.preventDefault();
-
-                var d = page.table.row($(this).parents("tr")).data();
-                page.id = d.id;
-
-                $.when(
-                    page.ajax.loadDataEditPerson(),
-                    page.ajax.loadDataEditSubject()
-                )
-                    .then(function () {
-                        return page.ajax.editAssignSub(d.id);
-                    })
-                    .then(function (res) {
-                        if (res) {
-                            $('#editassignmentId').val(res.id || d.id);
-                            $('#editrole').val(res.role);
-
-                            var $personSelect = $('#editperson');
-                            if ($personSelect.find("option[value='" + res.personId + "']").length === 0) {
-                                $personSelect.append(
-                                    $('<option>', {
-                                        value: res.personId,
-                                        text: res.personName
-                                    })
-                                );
-                            }
-                            $personSelect.val(res.personId ? String(res.personId) : "");
-
-                            $('#editsubject').val(res.subjectId ? String(res.subjectId) : "");
-                            $('#editterm').val(res.term);
-
-                            $('#editassignModal').modal('show');
-                        }
-                    })
-                    .fail(function (err) {
-                        console.error("Error loading edit form data: ", err);
-                    });
-            });
-        },
-
-
-        OnClickUpdateAssignSub: function () {
-            page.selector.btnupdateassign.on('click', function (e) {
-                e.preventDefault();
-                $.confirm({
-                    title: "",
-                    content: "Are you sure?",
-                    type: "dark",
-                    buttons: {
-                        cancel: {
-                            btnClass: "btn-default",
-                        },
-                        confirm: {
-                            btnClass: "btn-blue",
-                            action: function () {
-                                var updatedata = {
-                                    studentId: page.selector.editpersonName.val(),
-                                    teacherId: page.selector.editpersonName.val(),
-                                    role: page.selector.editrole.val(),
-                                    subjectId: page.selector.editsubject.val(),
-                                    term: page.selector.editerm.val(),
-                                    id: page.id
-                                };
-                                page.ajax.updateAssignSubject(updatedata).then((res) => {
-                                    if (res.success) {
-                                        // Close modal properly
-                                        var modalEl = document.getElementById('editassignModal');
-                                        var modal = bootstrap.Modal.getInstance(modalEl);
-                                        if (modal) modal.hide();
-
-                                        $('.modal-backdrop').remove();
-                                        $('body').removeClass('modal-open');
-
-                                        // Reload datatable
-                                        page.table.ajax.reload(null, false);
-
-                                        sweetAlert2Util.updateSuccess();
-                                    } else {
-                                        sweetAlert2Util.errorWithMessage(res.code, res.message);
-                                    }
-                                });
-                            },
-                        },
-                    },
-                });
-            });
-        },
-
-        OnClickDeleteAssignSub: function () {
-            $('body').on('click', ".deleteAssignBtn", function (e) {
-                e.preventDefault();
-                const d = page.table.row($(this).parents("tr")).data();
-                page.id = d.id;
-                $.confirm({
-                    title: "",
-                    content: "Are you sure?",
-                    type: "dark",
-                    buttons: {
-                        cancel: {
-                            btnClass: "btn-default",
-                        },
-                        confirm: {
-                            btnClass: "btn-blue",
-                            action: function () {
-                                page.ajax.deleteAssignSubject(d.id).then((res) => {
-                                    if (res.success) {
-                                        sweetAlert2Util.deleteSuccess();
-                                        page.table.ajax.reload();
-                                    } else {
-                                        sweetAlert2Util.errorWithMessage(res.code, res.message);
-                                    }
-                                });
-                            },
-                        },
-                    },
-                });
-
-            });
-        },
     },
 
 
@@ -425,24 +175,14 @@ const page = {
     },
 
     initData: function () {
-        page.ajax.loadSubjects();
-        page.ajax.loadPersons();
-        page.ajax.loadAssignSubjectsTable();
-        page.ajax.loadDataEditPerson();
-        page.ajax.loadDataEditSubject();
+        page.ajax.loadTeacherData();
+        page.ajax.loadDataMajors();
+        page.ajax.loadDataSubjects();
+        page.ajax.loadDataDay();
+        page.ajax.loadDataTimeSlot();
     },
 
     initEvent: function () {
-        page.fire.OnClickAddAssignSub();
-
-        $('#assignModal').on('show.bs.modal', function () {
-            page.ajax.loadSubjects();
-            page.ajax.loadPersons();
-        });
-
-        page.fire.OnClickEditAssignSub();
-        page.fire.OnClickUpdateAssignSub();
-        page.fire.OnClickDeleteAssignSub();
 
     },
 

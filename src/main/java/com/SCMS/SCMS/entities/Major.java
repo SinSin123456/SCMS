@@ -1,6 +1,7 @@
 package com.SCMS.SCMS.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,4 +28,18 @@ public class Major {
     @ManyToMany(mappedBy = "majors", fetch = FetchType.LAZY)
     private Set<StudentMangement> students = new HashSet<>();
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(majorID); 
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Major))
+            return false;
+        Major other = (Major) obj;
+        return Objects.equals(this.majorID, other.majorID);
+    }
 }

@@ -13,8 +13,9 @@ public class Subjects {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "subject_id") 
     private Long id;
-
+    
     @Column(name = "subject_code", length = 50, nullable = false, unique = true)
     private String subjectCode;
 

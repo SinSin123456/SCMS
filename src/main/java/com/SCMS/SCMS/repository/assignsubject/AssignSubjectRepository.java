@@ -17,42 +17,14 @@ import com.SCMS.SCMS.model.request.assignsubject.ResEditAssignSub;
 @Repository
 public interface AssignSubjectRepository extends JpaRepository<AssignSubject, Long> {
 
-        List<AssignSubject> findByStudent(StudentMangement student);
 
         List<AssignSubject> findByTeacher(Teacher teacher);
 
         
         List<AssignSubject> findByMajor(Major major);
 
-      
-        boolean existsByStudentAndMajor(StudentMangement student, Major major);
 
         List<AssignSubject> findByStatusTrue();
-
         
-        @Query("SELECT a FROM AssignSubject a " +
-                        "WHERE a.status = true AND (" +
-                        "LOWER(a.student.fullName) LIKE LOWER(CONCAT('%', :searchValue, '%')) OR " +
-                        "LOWER(a.teacher.fullName) LIKE LOWER(CONCAT('%', :searchValue, '%')) OR " +
-                        "LOWER(a.major.majorName) LIKE LOWER(CONCAT('%', :searchValue, '%')))")
-        List<AssignSubject> searchActiveByKeyword(@Param("searchValue") String searchValue);
-
-       
-        @Query("SELECT new com.SCMS.SCMS.model.request.assignsubject.ResEditAssignSub(" +
-                        "s.studentID, s.fullName, m.id, m.majorName, 'STUDENT', a.term) " +
-                        "FROM AssignSubject a " +
-                        "JOIN a.student s " +
-                        "JOIN a.major m " +
-                        "WHERE a.id = :id")
-        Optional<ResEditAssignSub> findStudentAssignSubject(@Param("id") Long id);
-
-      
-        @Query("SELECT new com.SCMS.SCMS.model.request.assignsubject.ResEditAssignSub(" +
-                        "t.teacherID, t.fullName, m.id, m.majorName, 'TEACHER', a.term) " +
-                        "FROM AssignSubject a " +
-                        "JOIN a.teacher t " +
-                        "JOIN a.major m " +
-                        "WHERE a.id = :id")
-        Optional<ResEditAssignSub> findTeacherAssignSubject(@Param("id") Long id);
 
 }

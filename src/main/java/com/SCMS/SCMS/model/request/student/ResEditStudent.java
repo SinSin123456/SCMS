@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class ResEditStudent {
     private Long id;
     private String fullName;
-   
     private String phone;
     private String sex;
     private Long classId;              

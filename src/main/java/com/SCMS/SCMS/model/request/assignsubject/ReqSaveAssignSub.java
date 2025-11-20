@@ -9,11 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReqSaveAssignSub {
-    
-    private Long studentId;
+    private Long id;
     private Long teacherId;
+    private Long roomId;
+    private Long userId;
+    private Long dayId;
+    private Long timeSlotId;
+    private Long subjectId;
+    private Long yearId;
     private Long majorId;
-    private String role;
     private String term;
     private boolean status;
     private String createdBy;

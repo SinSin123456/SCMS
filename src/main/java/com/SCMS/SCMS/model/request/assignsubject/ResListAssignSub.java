@@ -8,9 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResListAssignSub {
-    private Long id;
-    private String studentName;
     private String teacherName;
+    private String majorName;
     private String subjectName;
+    private String dayName;
+    private String timeSlotName;
+    private String roomName;
     private String term;
 }

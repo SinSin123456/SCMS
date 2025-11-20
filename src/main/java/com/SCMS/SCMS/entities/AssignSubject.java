@@ -16,16 +16,12 @@ public class AssignSubject {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id")
-    private StudentMangement student;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id", nullable = false)
     private Major major;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
+    private Users teacher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
@@ -46,8 +42,9 @@ public class AssignSubject {
     @Column(name = "term", length = 50)
     private String term;
 
-    @Column(name = "year", length = 10)
-    private String year;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "year_id")
+    private Year year;
 
     @Column(name = "status")
     private Boolean status;
@@ -63,4 +60,11 @@ public class AssignSubject {
 
     @Column(name = "updated_by", length = 100)
     private String updatedBy;
+
+    @Column(name = "deleted_at")
+    private Timestamp deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
 }
+

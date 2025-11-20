@@ -31,9 +31,11 @@ import com.SCMS.SCMS.model.response.DataResponse;
 import com.SCMS.SCMS.model.subject.DayDto;
 import com.SCMS.SCMS.model.subject.MajorDto;
 import com.SCMS.SCMS.model.subject.PersonDto;
+import com.SCMS.SCMS.model.subject.RoomDto;
 import com.SCMS.SCMS.model.subject.SubjectDto;
 import com.SCMS.SCMS.model.subject.TeacherDto;
 import com.SCMS.SCMS.model.subject.TimeSlotDto;
+import com.SCMS.SCMS.model.subject.YearDto;
 import com.SCMS.SCMS.service.assignsubject.AssignSubjectService;
 import com.SCMS.SCMS.service.person.PersonService;
 import com.SCMS.SCMS.service.subject.MajorService;
@@ -71,6 +73,22 @@ public class AssignSubjectController {
    public List<TimeSlotDto> getTimeSlot () {
     return assignSubjectService.geetAllTimeSlot();
    }
+
+   @GetMapping("/getroom")
+   public List<RoomDto> getrooms() {
+      return assignSubjectService.getAllRoom();
+   }
+
+   @GetMapping("/getyear")
+   public List<YearDto> getYear() {
+      return assignSubjectService.getAllYear();
+   }
+
+   @PostMapping("/addassignsubject")
+   public ResponseEntity<Map<String, Object>> addAssignSubject(@RequestBody ReqSaveAssignSub data) {
+      return assignSubjectService.addAssignSubject(data);
+   }
+   
 }
 
 

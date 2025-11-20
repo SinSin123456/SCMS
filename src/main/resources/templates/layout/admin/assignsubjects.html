@@ -149,6 +149,7 @@
                                     <th class="text-center">TimeSlot</th>
                                     <th class="text-center">Room</th>
                                     <th class="text-center">Term</th>
+                                    <th class="text-center">Year</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -215,7 +216,7 @@
 
                     <div class="mb-3">
                         <label for="room" class="form-label">Room</label>
-                        <select class="form-select" id="room" name="roomId" required>
+                        <select class="form-select" id="teacherroom" name="roomId" required>
                             <option value="">Select Room</option>
                         </select>
                         <div class="error text-danger small"></div>
@@ -227,6 +228,15 @@
                             required>
                         <div class="error text-danger small"></div>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="year" class="form-label">Year</label>
+                        <select class="form-select" id="teacheryear" name="yearId" required>
+                            <option value="">Select Year</option>
+                        </select>
+                        <div class="error text-danger small"></div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

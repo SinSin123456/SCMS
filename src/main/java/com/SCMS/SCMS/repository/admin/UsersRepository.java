@@ -1,6 +1,7 @@
 package com.SCMS.SCMS.repository.admin;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,4 +36,7 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 
         @Query("SELECT u FROM Users u WHERE u.status = true")
         List<Users> findAllActiveUsers();
+
+        Optional<Users> findByIdAndRole(Long id, String role);
+
 }

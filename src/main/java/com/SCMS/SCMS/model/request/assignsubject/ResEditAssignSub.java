@@ -8,10 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResEditAssignSub {
-    private Long personId;
-    private String personName;
-    private Long majorId;
-    private String majorName;
-    private String role;
-    private String term;
+    private Long id;
+    // private Long 
+    // private String majorName;
+    // private String role;
+    // private String term;
 }
